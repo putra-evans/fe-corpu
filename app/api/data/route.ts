@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 
-import { HeaderItem } from "@/app/types/menu";
-import { FeaturesType } from "@/app/types/features";
-import { ExpertChiefType } from "@/app/types/expertchief";
-import { GalleryImagesType } from "@/app/types/galleryimage";
-import { FooterLinkType } from "@/app/types/footerlink";
-import { FullMenuType } from "@/app/types/fullmenu";
+import { HeaderItem } from "../../../types/menu";
+import { FeaturesType } from "../../../types/features";
+import { ExpertChiefType } from "../../../types/expertchief";
+import { GalleryImagesType } from "../../../types/galleryimage";
+import { FullMenuType } from "../../../types/fullmenu";
+import { FooterLinkType } from "../../../types/footerlink";
+import { CourseType } from "../../../types/course";
+
 
 const HeaderData: HeaderItem[] = [
   { label: "Kelas", href: "/kelas" },
@@ -145,6 +147,45 @@ const FooterLinkData: FooterLinkType[] = [
   },
 ];
 
+const CourseData: CourseType[] = [
+  {
+    heading: '(MERN) Full-Stack Development',
+    name: 'James Nolan',
+    imgSrc: '/images/courses/mern.webp',
+    students: 150,
+    classes: 12,
+    price: 20,
+    rating: 4.4,
+  },
+  {
+    heading: 'Design Systems with React',
+    name: 'Elena Brooks',
+    imgSrc: '/images/courses/react.webp',
+    students: 130,
+    classes: 12,
+    price: 20,
+    rating: 4.5,
+  },
+  {
+    heading: 'Create Stunning Banners in Figma',
+    name: 'Aria Kim',
+    imgSrc: '/images/courses/UiUx.webp',
+    students: 120,
+    classes: 12,
+    price: 20,
+    rating: 5.0,
+  },
+  {
+    heading: 'Build & Launch a Webflow Website',
+    name: 'Marcus Lee',
+    imgSrc: '/images/courses/webflow.webp',
+    students: 150,
+    classes: 12,
+    price: 20,
+    rating: 5.0,
+  },
+]
+
 export const GET = () => {
   return NextResponse.json({
     HeaderData,
@@ -153,5 +194,6 @@ export const GET = () => {
     GalleryImagesData,
     FullMenuData,
     FooterLinkData,
+    CourseData,
   });
 };

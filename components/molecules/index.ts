@@ -9,7 +9,9 @@ import Cook from "./Cook";
 import Expert from "./Expert";
 import Gallery from "./Gallery";
 import Contact from "./Contact";
+
 import Newsletter from "./Newsletter";
+import FrontLayout from "./FrontLayout";
 
 export {
   Features,
@@ -24,4 +26,5 @@ export {
   Gallery,
   Contact,
   Newsletter,
+  FrontLayout
 };

@@ -1,57 +1,95 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
+import { Icon } from '@iconify/react/dist/iconify.js'
 
-const Hero = () => {
+const   Hero = () => {
   return (
-    <section id="home-section" className="bg-gray-50">
-      <div className="container xl:pt-7 pt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
-          <div className="lg:col-span-6">
-            <h1 className="font-semibold mb-5 text-black lg:text-start text-center sm:leading-20 leading-16">
-              Elevated Dining at Chef’s Kitchen
-            </h1>
-            <p className="text-black/55 text-lg font-normal mb-10 lg:text-start text-center">
-              Indulge in an elegant culinary journey, crafted with locally
-              sourced ingredients and world-class flavors — served fresh, every
-              day.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-5 items-center justify-center lg:justify-start">
-              <Link href="/#menu">
-                <button className="text-xl font-medium rounded-full text-white py-3 px-8 bg-primary hover:text-primary border border-primary hover:bg-transparent hover:cursor-pointer transition ease-in-out duration-300">
-                  View Menu
-                </button>
-              </Link>
-              <Link href="/#reserve">
-                <button className="text-xl border border-primary rounded-full font-medium py-3 px-8 text-primary hover:text-white hover:bg-primary hover:cursor-pointer transition ease-in-out duration-300">
-                  Reserve a Table
-                </button>
-              </Link>
-            </div>
-          </div>
-          <div className="lg:col-span-6 flex justify-center relative">
-            <div className="flex bg-white p-2 gap-5 items-center bottom-10 left-10 rounded-xl absolute">
-              <Image
-                src={"/images/hero/pizza.webp"}
-                alt="pizza-image"
-                width={68}
-                height={68}
-              />
-              <p className="text-lg font-normal">
-                Over 50+ <br /> signature dishes
+      <section id='home-section' className='bg-slate-gray'>
+        <div className='container pt-16'>
+          <div className='grid grid-cols-1 lg:grid-cols-12 lg:gap-1 gap-10 items-center'>
+            <div className='col-span-6 flex flex-col gap-8'>
+              <div className='flex gap-2 mx-auto lg:mx-0'>
+                <Icon
+                    icon='solar:verified-check-bold'
+                    className='text-success text-xl inline-block me-2'
+                />
+                <p className='text-success text-sm font-semibold text-center lg:text-start tracking-widest uppercase'>
+                  Get 30% off on first enroll
+                </p>
+              </div>
+              <h1 className='text-midnight_text lg:text-start text-center font-semibold leading-tight capitalize'>
+                Learn Engineering from Top Experts
+              </h1>
+              <p className='text-black/70 text-lg lg:text-start text-center max-w-xl capitalize'>
+                Build skills with our courses and mentor from world-class
+                companies.
               </p>
+              <div className='relative rounded-full'>
+                <input
+                    type='text'
+                    name='course'
+                    className='py-4 pl-8 pr-20 text-lg w-full text-black rounded-full border border-black/10 focus:outline-hidden focus:border-primary duration-300 shadow-input-shadow'
+                    placeholder='Search engineering courses...'
+                    autoComplete='off'
+                />
+                <button className='group border border-secondary bg-secondary hover:bg-transparent p-3 rounded-full absolute right-2 top-1.5 duration-300 hover:cursor-pointer'>
+                  <Icon
+                      icon='solar:magnifer-linear'
+                      className='text-white group-hover:text-primary text-2xl inline-block duration-300'
+                  />
+                </button>
+              </div>
+              <div className='flex items-center justify-between pt-10 lg:pt-4 flex-wrap gap-4'>
+                <div className='flex gap-2'>
+                  <Image
+                      src='/images/hero/check-circle.svg'
+                      alt='check-image'
+                      width={30}
+                      height={30}
+                      className='smallImage'
+                  />
+                  <p className='text-sm sm:text-lg font-normal text-black'>
+                    Flexible Schedules
+                  </p>
+                </div>
+                <div className='flex gap-2'>
+                  <Image
+                      src='/images/hero/check-circle.svg'
+                      alt='check-image'
+                      width={30}
+                      height={30}
+                      className='smallImage'
+                  />
+                  <p className='text-sm sm:text-lg font-normal text-black'>
+                    Guided Learning Paths
+                  </p>
+                </div>
+                <div className='flex gap-2'>
+                  <Image
+                      src='/images/hero/check-circle.svg'
+                      alt='check-image'
+                      width={30}
+                      height={30}
+                      className='smallImage'
+                  />
+                  <p className='text-sm sm:text-lg font-normal text-black'>
+                    Peer Support Community
+                  </p>
+                </div>
+              </div>
             </div>
-            <Image
-              src="/images/hero/banner-image.webp"
-              alt="nothing"
-              width={1000}
-              height={805}
-            />
+            <div className='col-span-6 flex justify-center'>
+              <Image
+                  src='/images/hero/mahila.webp'
+                  alt='nothing'
+                  width={1000}
+                  height={805}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
+  )
+}
 
 export default Hero;
