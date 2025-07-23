@@ -4,8 +4,9 @@ import { Poppins } from "next/font/google";
 import "simplebar-react/dist/simplebar.min.css";
 import { Flowbite, ThemeModeScript } from "flowbite-react";
 import customTheme from "../admin/utils/theme/custom-theme";
-
 import "../admin/css/globals.css";
+import { SessionProvider } from "next-auth/react";
+import AuthProvider from "./context/AuthProvider";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -29,7 +30,9 @@ export default function RootLayout({
         <ThemeModeScript />
       </head>
       <body className={`${font.className}`}>
-        <Flowbite theme={{ theme: customTheme }}>{children}</Flowbite>
+        <AuthProvider>
+          <Flowbite theme={{ theme: customTheme }}>{children}</Flowbite>
+        </AuthProvider>
       </body>
     </html>
   );

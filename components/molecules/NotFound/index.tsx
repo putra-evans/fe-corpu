@@ -64,7 +64,7 @@ const NotFound = () => {
                 href="/"
                 className="rounded-md px-7 py-3 text-base font-medium text-white transition hover:bg-blue-700 bg-primary"
               >
-                Kembali
+                Kembali ke Halaman Utama
               </Link>
             </div>
           </div>

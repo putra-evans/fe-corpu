@@ -1,10 +1,14 @@
-
+"use client";
 import { Button, Dropdown } from "flowbite-react";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
+import { useSession, signOut } from "next-auth/react";
 const Profile = () => {
+  const { data: session } = useSession();
+
+  if (!session) return null;
   return (
     <div className="relative group/menu">
       <Dropdown
@@ -23,7 +27,6 @@ const Profile = () => {
           </span>
         )}
       >
-
         <Dropdown.Item
           as={Link}
           href="#"
@@ -49,7 +52,13 @@ const Profile = () => {
           My Task
         </Dropdown.Item>
         <div className="p-3 pt-0">
-        <Button as={Link}  size={'sm'}  href="/auth/login" className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
+          <Button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            size={"sm"}
+            className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none"
+          >
+            Logout
+          </Button>
         </div>
       </Dropdown>
     </div>

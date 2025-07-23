@@ -1,10 +1,9 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import {FrontLayout} from "../components";
 const font = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-    display: "swap",
+  display: "swap",
 });
 
 export default function RootLayout({
@@ -14,9 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${font.className}`}>
-        {children}
-      </body>
+      <body className={`${font.className}`}>{children}</body>
     </html>
   );
 }

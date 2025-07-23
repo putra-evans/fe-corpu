@@ -8,7 +8,7 @@ import img1 from "/public/images/blog/blog-img1.jpg";
 import img2 from "/public/images/blog/blog-img2.jpg";
 import img3 from "/public/images/blog/blog-img3.jpg";
 import { Badge } from "flowbite-react";
-import { TbPoint }   from "react-icons/tb";
+import { TbPoint } from "react-icons/tb";
 
 import { Icon } from "@iconify/react";
 import Link from "next/link";
@@ -24,7 +24,7 @@ const BlogCardsData = [
     view: "9,125",
     comments: "3",
     time: "Mon, Dec 19",
-    url:''
+    url: "",
   },
   {
     avatar: user2,
@@ -37,7 +37,7 @@ const BlogCardsData = [
     view: "4,150",
     comments: "38",
     time: "Sun, Dec 18",
-    url:''
+    url: "",
   },
   {
     avatar: user3,
@@ -49,7 +49,7 @@ const BlogCardsData = [
     view: "9,480",
     comments: "12",
     time: "Sat, Dec 17",
-    url:''
+    url: "",
   },
 ];
 
@@ -60,7 +60,7 @@ const BlogCards = () => {
         {BlogCardsData.map((item, i) => (
           <div className="lg:col-span-4 col-span-12" key={i}>
             <Link href={item.url} className="group">
-            <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-0 relative w-full break-words overflow-hidden">
+              <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-0 relative w-full break-words overflow-hidden">
                 <div className="relative">
                   <Image src={item.coveravatar} alt="matdash" />
                   <Badge
@@ -80,21 +80,28 @@ const BlogCards = () => {
                   <Badge color={"muted"} className="mt-6">
                     {item.category}
                   </Badge>
-                  <h5 className="text-lg my-6 group-hover:text-primary line-clamp-2">{item.title}</h5>
+                  <h5 className="text-lg my-6 group-hover:text-primary line-clamp-2">
+                    {item.title}
+                  </h5>
                   <div className="flex">
                     <div className="flex gap-2 me-6 items-center">
-                    <Icon icon="solar:eye-outline" height="18" className="text-dark" />
+                      <Icon
+                        icon="solar:eye-outline"
+                        height="18"
+                        className="text-dark"
+                      />
                       <span className="text-sm text-darklink">{item.view}</span>
                     </div>
                     <div className="flex gap-2 items-center">
-                    <Icon icon="solar:chat-line-outline" height="18" className="text-dark" />
+                      <Icon
+                        icon="solar:chat-line-outline"
+                        height="18"
+                        className="text-dark"
+                      />
                       <span className="text-sm text-darklink">{item.view}</span>
                     </div>
                     <div className="flex gap-1 items-center ms-auto">
-                      <TbPoint
-                        size={15}
-                        className="text-dark"
-                      />{" "}
+                      <TbPoint size={15} className="text-dark" />{" "}
                       <span className="text-sm text-darklink">{item.time}</span>
                     </div>
                   </div>
