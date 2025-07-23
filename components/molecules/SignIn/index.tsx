@@ -12,8 +12,8 @@ const Signin = () => {
       <form onSubmit={(e) => e.preventDefault()}>
         <div className="mb-[22px]">
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="NIP Pegawai"
             className="w-full rounded-md border border-solid bg-transparent px-5 py-3 text-base text-dark outline-hidden transition border-gray-200 placeholder:text-black/30 focus:border-primary focus-visible:shadow-none text-black"
           />
         </div>
@@ -31,6 +31,27 @@ const Signin = () => {
           >
             Sign In
           </button>
+        </div>
+        <div className="mb-10">
+          <h5 className="text-red-400 font-semibold text-left">Catatan :</h5>
+          <ul className="space-y-0">
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span>
+                {" "}
+                <span className="font-semibold">NIP Pegawai</span> dan{" "}
+                <span className="font-semibold">Password</span>
+                <span> wajib diisi</span>
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span>
+                Akun sama dengan{" "}
+                <span className="font-semibold">ESPJ Online</span>{" "}
+              </span>
+            </li>
+          </ul>
         </div>
       </form>
     </>

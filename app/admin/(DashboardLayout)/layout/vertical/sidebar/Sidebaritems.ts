@@ -32,7 +32,7 @@ const SidebarContent: MenuItem[] = [
         name: "Dashboard",
         icon: "solar:widget-add-line-duotone",
         id: uniqueId(),
-        url: "/",
+        url: "/admin",
         isPro: false,
       },
       {
@@ -43,7 +43,7 @@ const SidebarContent: MenuItem[] = [
           {
             name: "Homepage",
             id: uniqueId(),
-            url: "https://matdash-nextjs-main.vercel.app/frontend-pages/homepage",
+            url: "",
             isPro: true,
           },
         ],
@@ -51,19 +51,19 @@ const SidebarContent: MenuItem[] = [
     ],
   },
   {
-    heading: "UTILITIES",
+    heading: "MENU",
     children: [
       {
-        name: "Typography",
+        name: "Kelas Saya",
         icon: "solar:text-circle-outline",
+        url: "/admin/kelas",
         id: uniqueId(),
-        url: "/ui/typography",
       },
       {
         name: "Table",
         icon: "solar:bedside-table-3-linear",
         id: uniqueId(),
-        url: "/ui/table",
+        url: "/admin/sample-page",
       },
       {
         name: "Form",
