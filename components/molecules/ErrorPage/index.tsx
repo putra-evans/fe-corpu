@@ -1,8 +1,40 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { title } from "process";
 
-const NotFound = () => {
+interface Props {
+  code: number;
+  message?: string;
+}
+
+const defaultMessages: Record<number, string> = {
+  400: "Permintaan tidak valid.",
+  401: "Anda tidak memiliki izin.",
+  403: "Akses ke halaman ini dilarang.",
+  404: "Halaman tidak ditemukan.",
+  500: "Terjadi kesalahan pada server.",
+};
+
+const defaultImages: Record<number, string> = {
+  400: "/images/error/400.svg",
+  401: "/images/error/401.svg",
+  403: "/images/error/403.svg",
+  404: "/images/error/404.svg",
+  500: "/images/error/500.svg",
+};
+const defaultDesc: Record<number, string> = {
+  400: "Oops! Permintaan anda tidak dapat diproses, silahkan periksa kembali",
+  401: "Oops! Halaman yang anda cari tidak diizinkan, silahkan login terlebih dahulu",
+  403: "Oops! Forbidden, anda tidak memiliki izin, silahkan login terlebih dahulu",
+  404: "Oops! Halaman yang anda cari tidak ditemukan, pastikan halaman yang dicari sesuai",
+  500: "Oops! Terjadi kesalahan pada server",
+};
+
+const ErrorPage = ({ code, message }: Props) => {
+  const title = message || defaultMessages[code] || "Terjadi kesalahan.";
+  const imageSrc = defaultImages[code] || "/images/error/default.svg";
+  const desc = defaultDesc[code] || "Uknown";
   return (
     <section className="bg-white pt-20 pb-20">
       <div className="container mx-auto">
@@ -10,7 +42,7 @@ const NotFound = () => {
           <div className="w-full px-4 md:w-5/12 lg:w-6/12">
             <div className="relative mx-auto aspect-129/138 max-w-[357px] text-center">
               <Image
-                src="/images/404.svg"
+                src={imageSrc}
                 alt="image"
                 width={0}
                 height={0}
@@ -54,11 +86,10 @@ const NotFound = () => {
                 </svg>
               </div>
               <h3 className="mb-5 text-2xl font-semibold text-dark dark:text-white">
-                Halaman tidak ditemukan.
+                {title}
               </h3>
               <p className="mb-8 text-base text-body-color dark:text-dark-6">
-                Oops! Halaman yang anda cari tidak ditemukan atau link tidak
-                sesuai.
+                {desc}
               </p>
               <Link
                 href="/"
@@ -74,4 +105,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default ErrorPage;

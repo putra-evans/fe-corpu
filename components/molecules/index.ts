@@ -4,7 +4,6 @@ import Header from "./Header";
 import Footer from "./Footer";
 import SignIn from "./SignIn";
 import ScrollToTop from "./ScrollToTop";
-import NotFound from "./NotFound";
 import Cook from "./Cook";
 import Expert from "./Expert";
 import Gallery from "./Gallery";
@@ -12,6 +11,7 @@ import Contact from "./Contact";
 
 import Newsletter from "./Newsletter";
 import FrontLayout from "./FrontLayout";
+import ErrorPage from "./ErrorPage";
 
 export {
   Features,
@@ -20,11 +20,11 @@ export {
   Header,
   SignIn,
   ScrollToTop,
-  NotFound,
+  ErrorPage,
   Cook,
   Expert,
   Gallery,
   Contact,
   Newsletter,
-  FrontLayout
+  FrontLayout,
 };

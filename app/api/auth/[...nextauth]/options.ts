@@ -56,7 +56,7 @@ export const options: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/login",
+    signIn: "/",
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {

@@ -1,17 +1,20 @@
-"use client";
+// "use client";
 
 import {
-    Contact,
-    Cook,
-    Expert,
-    Features, FrontLayout,
-    Gallery,
-    Hero,
-    Newsletter,
+  Contact,
+  Cook,
+  Expert,
+  Features,
+  FrontLayout,
+  Gallery,
+  Hero,
+  Newsletter,
 } from "../components";
 import { Metadata } from "next";
 
-const Home = () => {
+// const Home = () => {
+export default async function Home() {
+  await new Promise((resolve) => setTimeout(resolve, 5000));
   return (
     <FrontLayout>
       <Hero />
@@ -23,6 +26,6 @@ const Home = () => {
       <Newsletter />
     </FrontLayout>
   );
-};
+}
 
-export default Home;
+// export default Home;

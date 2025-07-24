@@ -1,16 +1,10 @@
-import { NotFound } from "../components";
+import { ErrorPage } from "../components";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "404 Page | DISKOMINFOTIK ",
+  title: "404 Page | Not Found ",
 };
 
-const ErrorPage = () => {
-  return (
-    <>
-      <NotFound />
-    </>
-  );
-};
-
-export default ErrorPage;
+export default function NotFoundPage() {
+  return <ErrorPage code={404} />;
+}
