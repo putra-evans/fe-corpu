@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 import {
   Contact,
@@ -11,10 +11,30 @@ import {
   Newsletter,
 } from "../components";
 import { Metadata } from "next";
+import { useEffect, useState } from "react";
+import GlobalLoading from "./loading";
 
-// const Home = () => {
-export default async function Home() {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+const Home = () => {
+  // export default async function Home() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulasi fetch data
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <GlobalLoading />;
+      </>
+    );
+  }
+
   return (
     <FrontLayout>
       <Hero />
@@ -26,6 +46,6 @@ export default async function Home() {
       <Newsletter />
     </FrontLayout>
   );
-}
+};
 
-// export default Home;
+export default Home;

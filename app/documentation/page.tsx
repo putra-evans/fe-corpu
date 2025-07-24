@@ -3,7 +3,7 @@ import { DocNavigation } from "./DocNavigation";
 import { Introduction } from "./Introduction";
 import { PackageStructure } from "./PackageStructure";
 import { QuickStart } from "./QuickStart";
-import {FrontLayout} from "../../components";
+import { FrontLayout } from "../../components";
 
 const Documentation = () => {
   return (
@@ -22,7 +22,6 @@ const Documentation = () => {
         </div>
       </div>
     </FrontLayout>
-
   );
 };
 export default Documentation;

@@ -12,6 +12,7 @@ import Contact from "./Contact";
 import Newsletter from "./Newsletter";
 import FrontLayout from "./FrontLayout";
 import ErrorPage from "./ErrorPage";
+import ToastProvider from "./ToastProvider";
 
 export {
   Features,
@@ -27,4 +28,5 @@ export {
   Contact,
   Newsletter,
   FrontLayout,
+  ToastProvider,
 };
