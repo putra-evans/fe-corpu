@@ -11,11 +11,11 @@ const titles: Record<number, string> = {
   500: "500 - Server Error",
 };
 
-export async function generateMetadata({
+export function generateMetadata({
   params,
 }: {
   params: { code: string };
-}): Promise<Metadata> {
+}): Metadata {
   const code = parseInt(params.code);
   const title = titles[code] || "Error";
   return {
