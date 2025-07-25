@@ -1,9 +1,6 @@
+// app/error/[code]/page.tsx
 import { Metadata } from "next";
 import { ErrorPage } from "../../../components";
-
-interface PageProps {
-  params: { code: string };
-}
 
 const titles: Record<number, string> = {
   400: "400 - Bad Request",
@@ -13,7 +10,11 @@ const titles: Record<number, string> = {
   500: "500 - Server Error",
 };
 
-export async function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: { code: string };
+}): Promise<Metadata> {
   const code = parseInt(params.code);
   const title = titles[code] || "Error";
   return {
@@ -22,7 +23,11 @@ export async function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function ErrorRoutePage({ params }: PageProps) {
+export default function ErrorRoutePage({
+  params,
+}: {
+  params: { code: string };
+}) {
   const errorCode = parseInt(params.code);
   return <ErrorPage code={isNaN(errorCode) ? 400 : errorCode} />;
 }

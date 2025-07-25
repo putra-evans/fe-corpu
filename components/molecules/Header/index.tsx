@@ -8,6 +8,7 @@ import MobileHeaderLink from "./Navigation/MobileHeaderLink";
 import Signin from "../SignIn";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { HeaderItem } from "../../../types/menu";
+import { useSession } from "next-auth/react";
 
 const Header: React.FC = () => {
   const [headerLink, setHeaderLink] = useState<HeaderItem[]>([]);
@@ -19,6 +20,8 @@ const Header: React.FC = () => {
   const navbarRef = useRef<HTMLDivElement>(null);
   const signInRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,14 +91,25 @@ const Header: React.FC = () => {
             ))}
           </nav>
           <div className="flex items-center gap-2 lg:gap-3">
-            <button
-              className="hidden lg:block text-primary duration-300 bg-primary/15 hover:text-white hover:bg-primary font-medium text-lg py-2 px-6 rounded-full hover:cursor-pointer"
-              onClick={() => {
-                setIsSignInOpen(true);
-              }}
-            >
-              Sign In
-            </button>
+            {!session ? (
+              <button
+                className="hidden lg:block text-primary duration-300 bg-primary/15 hover:text-white hover:bg-primary font-medium text-lg py-2 px-6 rounded-full hover:cursor-pointer"
+                onClick={() => {
+                  setIsSignInOpen(true);
+                }}
+              >
+                Sign In
+              </button>
+            ) : (
+              // <h5>{session.user.nama_asn}</h5>
+              <Link
+                href="/admin"
+                className="text-lg flex font-medium duration-300  text-black/50  hover:text-primary"
+              >
+                {session.user.nama_asn}
+              </Link>
+            )}
+
             {isSignInOpen && (
               <div className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-50">
                 <div

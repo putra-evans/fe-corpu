@@ -8,7 +8,6 @@ import { useSession, signOut } from "next-auth/react";
 const Profile = () => {
   const { data: session } = useSession();
 
-  if (!session) return null;
   return (
     <div className="relative group/menu">
       <Dropdown

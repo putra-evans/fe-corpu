@@ -11,7 +11,6 @@ export const options: NextAuthOptions = {
       },
       async authorize(credentials) {
         let pass = credentials.password;
-        let res;
         console.log(pass);
         if (pass === "Putra@21") {
           const res = await fetch(
@@ -99,7 +98,7 @@ export const options: NextAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        // secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",
         // Tidak menyetel expires berarti cookie session hilang saat browser ditutup
       },
     },
@@ -118,10 +117,15 @@ export const options: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.username = token.username;
-      session.user.nama_asn = token.nama_asn;
-      return session;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          username: token.username,
+          nama_asn: token.nama_asn,
+        },
+      };
     },
   },
 };
