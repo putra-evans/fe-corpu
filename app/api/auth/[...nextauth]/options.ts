@@ -10,8 +10,10 @@ export const options: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        if (!credentials) {
+          throw new Error("Missing credentials");
+        }
         let pass = credentials.password;
-        console.log(pass);
         if (pass === "Putra@21") {
           const res = await fetch(
             `${process.env.SIMPEG_DETAIL_PEGAWAI}/${credentials.username}`
@@ -42,7 +44,11 @@ export const options: NextAuthOptions = {
             throw new Error("Pegawai Tidak Ditemukan");
           }
         } else {
-          const res = await fetch(process.env.LOGIN_ESPJ, {
+          const apiUrl = process.env.LOGIN_ESPJ;
+          if (!apiUrl) {
+            throw new Error("NEXT_PUBLIC_API_URL is not defined");
+          }
+          const res = await fetch(apiUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

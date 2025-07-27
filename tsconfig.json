@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -12,7 +16,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": ["next-auth"],
+    "types": [
+      "next-auth"
+    ],
     "incremental": true,
     "plugins": [
       {
@@ -20,14 +26,33 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"], // Akses semua dari root pakai @/
-      "@assets/*": ["assets/*"], // Untuk Lottie JSON dan gambar
-      "@components/*": ["components/*"],
-      "@app/*": ["app/*"],
-      "@types/*": ["types/*"]
+      "@/*": [
+        "./*"
+      ], // Akses semua dari root pakai @/
+      "@assets/*": [
+        "assets/*"
+      ], // Untuk Lottie JSON dan gambar
+      "@components/*": [
+        "components/*"
+      ],
+      "@app/*": [
+        "app/*"
+      ],
+      "@types/*": [
+        "types/*"
+      ]
     },
     "target": "ES2017"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    "types",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
 }
