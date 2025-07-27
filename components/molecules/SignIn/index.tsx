@@ -66,22 +66,26 @@ const Signin = () => {
 
       <form onSubmit={formik.handleSubmit}>
         <div className="mb-[22px]">
-          <input
-            name="username"
-            onChange={handleForm}
-            value={formik.values.username}
-            pattern="\d*"
-            inputMode="numeric"
-            placeholder="NIP Pegawai"
-            onBlur={formik.handleBlur}
-            className={`w-full rounded-md border px-5 py-3 text-base text-black bg-transparent transition placeholder:text-black/30 focus:outline-none focus:ring-1 
-      ${
-        formik.touched.username && formik.errors.username
-          ? "border-red-500 focus:ring-red-500"
-          : "border-gray-200 focus:ring-primary"
-      }
-    `}
-          />
+          <div
+            className={`flex items-center rounded-md border px-5 pr-3 bg-[#eaf1ff] transition focus-within:ring-1 ${
+              formik.touched.password && formik.errors.password
+                ? "border-red-500 focus-within:ring-red-500"
+                : "border-gray-200 focus-within:ring-primary"
+            }`}
+            style={{ height: "48px" }}
+          >
+            <input
+              name="username"
+              onChange={handleForm}
+              value={formik.values.username}
+              pattern="\d*"
+              inputMode="numeric"
+              placeholder="NIP Pegawai"
+              onBlur={formik.handleBlur}
+              className="flex-1 px-1 text-base bg-transparent text-black placeholder:text-black/30 border-none focus:ring-0 focus:outline-none"
+            />
+          </div>
+
           {formik.touched.username && formik.errors.username && (
             <p className="text-left text-sm text-red-500 mt-1">
               {formik.errors.username}
@@ -89,31 +93,34 @@ const Signin = () => {
           )}
         </div>
         <div className="mb-[22px] relative">
-          <input
-            name="password"
-            onChange={handleForm}
-            onBlur={formik.handleBlur}
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            className={`w-full rounded-md border px-5 py-3 pr-12 text-base text-black bg-[#eaf1ff] transition placeholder:text-black/30 focus:outline-none focus:ring-1 ${
+          <div
+            className={`flex items-center rounded-md border px-5 pr-3 bg-[#eaf1ff] transition focus-within:ring-1 ${
               formik.touched.password && formik.errors.password
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-200 focus:ring-primary"
+                ? "border-red-500 focus-within:ring-red-500"
+                : "border-gray-200 focus-within:ring-primary"
             }`}
-          />
-
-          {/* Eye Icon */}
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-800 focus:outline-none"
+            style={{ height: "48px" }}
           >
-            <Icon
-              icon={showPassword ? "ion:eye-off" : "ion:eye"}
-              width="20"
-              height="20"
+            <input
+              name="password"
+              onChange={handleForm}
+              onBlur={formik.handleBlur}
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="flex-1 px-1 text-base bg-transparent text-black placeholder:text-black/30 border-none focus:ring-0 focus:outline-none"
             />
-          </button>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-500 hover:text-gray-800 focus:outline-none"
+            >
+              <Icon
+                icon={showPassword ? "ion:eye-off" : "ion:eye"}
+                width="20"
+                height="20"
+              />
+            </button>
+          </div>
 
           {/* Error Message */}
           {formik.touched.password && formik.errors.password && (
