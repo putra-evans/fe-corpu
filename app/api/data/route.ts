@@ -6,8 +6,7 @@ import { ExpertChiefType } from "../../../types/expertchief";
 import { GalleryImagesType } from "../../../types/galleryimage";
 import { FullMenuType } from "../../../types/fullmenu";
 import { FooterLinkType } from "../../../types/footerlink";
-import { CourseType } from "../../../types/course";
-
+import { KelasType } from "../../../types/kelas";
 
 const HeaderData: HeaderItem[] = [
   { label: "Kelas", href: "/kelas" },
@@ -147,44 +146,135 @@ const FooterLinkData: FooterLinkType[] = [
   },
 ];
 
-const CourseData: CourseType[] = [
+const CourseData: KelasType[] = [
   {
-    heading: '(MERN) Full-Stack Development',
-    name: 'James Nolan',
-    imgSrc: '/images/courses/mern.webp',
+    heading: "(MERN) Full-Stack Development",
+    name: "James Nolan",
+    imgSrc: "/images/courses/mern.webp",
     students: 150,
     classes: 12,
     price: 20,
     rating: 4.4,
   },
   {
-    heading: 'Design Systems with React',
-    name: 'Elena Brooks',
-    imgSrc: '/images/courses/react.webp',
+    heading: "Design Systems with React",
+    name: "Elena Brooks",
+    imgSrc: "/images/courses/react.webp",
     students: 130,
     classes: 12,
     price: 20,
     rating: 4.5,
   },
   {
-    heading: 'Create Stunning Banners in Figma',
-    name: 'Aria Kim',
-    imgSrc: '/images/courses/UiUx.webp',
+    heading: "Create Stunning Banners in Figma",
+    name: "Aria Kim",
+    imgSrc: "/images/courses/UiUx.webp",
     students: 120,
     classes: 12,
     price: 20,
     rating: 5.0,
   },
   {
-    heading: 'Build & Launch a Webflow Website',
-    name: 'Marcus Lee',
-    imgSrc: '/images/courses/webflow.webp',
+    heading: "Build & Launch a Webflow Website",
+    name: "Marcus Lee",
+    imgSrc: "/images/courses/webflow.webp",
     students: 150,
     classes: 12,
     price: 20,
     rating: 5.0,
   },
-]
+  {
+    heading: "Explore The World",
+    name: "Diego Lee",
+    imgSrc: "/images/courses/adventure.jpg",
+    students: 150,
+    classes: 12,
+    price: 20,
+    rating: 5.0,
+  },
+  {
+    heading: "Kembangkan Bisnismu Ke Seluruh Dunia",
+    name: "Cristiano hwa",
+    imgSrc: "/images/courses/bisnis.png",
+    students: 500,
+    classes: 23,
+    price: 20000,
+    rating: 3.0,
+  },
+  {
+    heading: "Tutorial Dasar dan Pergerakan Flexibel Dance yang Popular",
+    name: "Messi Lionel",
+    imgSrc: "/images/courses/dance.jpg",
+    students: 30,
+    classes: 28,
+    price: 100000,
+    rating: 4.5,
+  },
+  {
+    heading: "Rekomendasi Desain Studio dengan Modern Desain yang Terbaru",
+    name: "Joni Bernard",
+    imgSrc: "/images/courses/desain_studio.jpg",
+    students: 37,
+    classes: 78,
+    price: 150000,
+    rating: 4.7,
+  },
+  {
+    heading: "Explore Dunia Dengan Penuh Semangat dan Kehangatan",
+    name: "Bernard",
+    imgSrc: "/images/courses/explore.jpg",
+    students: 57,
+    classes: 71,
+    price: 200000,
+    rating: 4.4,
+  },
+  {
+    heading: "Tutorial Panduan Praktis Awal Untuk Pemula Mendaki Gunung",
+    name: "Bernard Kennedy",
+    imgSrc: "/images/courses/hiking.jpg",
+    students: 100,
+    classes: 89,
+    price: 250000,
+    rating: 4.5,
+  },
+  {
+    heading: "Berfikir Kritis dalam menyelesaikan permasalahan yang ada",
+    name: "Thomas Edison",
+    imgSrc: "/images/courses/kreatifitas.jpg",
+    students: 140,
+    classes: 90,
+    price: 220000,
+    rating: 4.1,
+  },
+  {
+    heading: "Tips-Trik dalam menghadapi forum pada saat melaksanakan meeting",
+    name: "Edison Alfa",
+    imgSrc: "/images/courses/meeting.jpg",
+    students: 99,
+    classes: 30,
+    price: 210000,
+    rating: 3.4,
+  },
+  {
+    heading:
+      "Fakta Menarik dengan sepeda kita berhasil menurunkan berat badan dengan cepat",
+    name: "Alfa Anwar",
+    imgSrc: "/images/courses/sepeda.jpg",
+    students: 87,
+    classes: 80,
+    price: 150000,
+    rating: 5.0,
+  },
+  {
+    heading: "Belajar Skateboard dengan cepat untuk pemula",
+    name: "Joko Anwar",
+    imgSrc: "/images/courses/skateboard.jpg",
+    students: 20,
+    classes: 150,
+    price: 120000,
+    rating: 4.0,
+  },
+];
 
 export const GET = () => {
   return NextResponse.json({

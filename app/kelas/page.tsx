@@ -7,11 +7,11 @@ import { Icon } from "@iconify/react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { CourseType } from "../../types/course";
-import { FrontLayout, Skeleton } from "../../components";
+import { KelasType } from "../../types/kelas";
+import { CardKelas, FrontLayout, Skeleton } from "../../components";
 
 const Courses = () => {
-  const [course, setCourse] = useState<CourseType[]>([]);
+  const [course, setCourse] = useState<KelasType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,41 +61,12 @@ const Courses = () => {
     ],
   };
 
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const halfStars = rating % 1 >= 0.5 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStars;
-
-    return (
-      <div>
-        {Array(fullStars).fill(
-          <Icon
-            icon="tabler:star-filled"
-            className="text-yellow-500 text-xl inline-block"
-          />
-        )}
-        {halfStars > 0 && (
-          <Icon
-            icon="tabler:star-half-filled"
-            className="text-yellow-500 text-xl inline-block"
-          />
-        )}
-        {Array(emptyStars).fill(
-          <Icon
-            icon="tabler:star-filled"
-            className="text-gray-400 text-xl inline-block"
-          />
-        )}
-      </div>
-    );
-  };
-
   return (
     <FrontLayout>
-      <section id="courses" className="scroll-mt-12 pb-20 mt-10">
+      <section id="courses" className="scroll-mt-12 pb-20 mt-12">
         <div className="container">
           <div className="text-center mb-14">
-            <p className="text-primary text-lg font-normal tracking-widest uppercase">
+            <p className="text-primary text-3xl font-normal tracking-widest uppercase underline">
               Katalog Kelas
             </p>
             <h2 className="font-semibold lg:max-w-60% mx-auto mt-3">
@@ -104,74 +75,68 @@ const Courses = () => {
           </div>
           <Slider {...settings}>
             {loading
-              ? Array.from({ length: 4 }).map((_, i) => (
+              ? Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton tipe="courses" key={i} />
                 ))
-              : course.map((items, i) => (
-                  <div key={i}>
-                    <div className="bg-white m-3 px-3 pt-3 pb-12 shadow-md rounded-2xl h-full border border-black/10 capitalize">
-                      <div className="relative rounded-3xl">
-                        <div className="rounded-2xl">
-                          <Image
-                            src={items.imgSrc}
-                            alt="course-image"
-                            width={389}
-                            height={262}
-                            className="w-full rounded-2xl"
-                          />
-                        </div>
-                        <div className="absolute right-5 -bottom-3 bg-secondary rounded-full p-4">
-                          <p className="text-white uppercase text-center text-sm font-medium">
-                            best seller
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="px-3 pt-6">
-                        <Link href="#">
-                          <h6 className="text-black max-w-75% inline-block hover:text-primary">
-                            {items.heading}
-                          </h6>
-                        </Link>
-                        <p className="text-base font-normal pt-6 text-black/75">
-                          {items.name}
-                        </p>
-                        <div className="flex justify-between items-center py-6 border-b">
-                          <div className="flex items-center gap-4">
-                            <p className="text-red-700 text-2xl font-medium">
-                              {items.rating.toFixed(1)}
-                            </p>
-                            <div className="flex">
-                              {renderStars(items.rating)} {/* Dynamic stars */}
-                            </div>
-                          </div>
-                          <p className="text-3xl font-medium">${items.price}</p>
-                        </div>
-                        <div className="flex justify-between pt-6">
-                          <div className="flex gap-4">
-                            <Icon
-                              icon="solar:notebook-minimalistic-outline"
-                              className="text-primary text-xl inline-block me-2"
-                            />
-                            <p className="text-base font-medium text-black/75">
-                              {items.classes} classes
-                            </p>
-                          </div>
-                          <div className="flex gap-4">
-                            <Icon
-                              icon="solar:users-group-rounded-linear"
-                              className="text-primary text-xl inline-block me-2"
-                            />
-                            <p className="text-base font-medium text-black/75">
-                              {items.students} students
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              : course
+                  .slice(0, 5)
+                  .map((items, i) => <CardKelas item={items} key={i} />)}
           </Slider>
+        </div>
+      </section>
+      <section className="scroll-mt-12 pb-20 mt-12 bg-white">
+        <div className="max-w-screen-2xl mx-auto sm:px-6 lg:px-1">
+          <div className="flex flex-col lg:flex-row gap-2">
+            {/* Sidebar */}
+            <aside className="w-[250px] lg:flex-shrink-0 lg:sticky top-24 self-start">
+              <div className="bg-white rounded-xl shadow p-4">
+                <h2 className="font-bold text-lg mb-4">Kategori Kelas</h2>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" />
+                    <span>All</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" />
+                    <span>Design</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" />
+                    <span>Coding</span>
+                  </label>
+                </div>
+
+                <h2 className="font-bold text-lg mt-6 mb-4">Filter</h2>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="sort" />
+                    <span>Baru Rilis</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="sort" />
+                    <span>Terpopuler</span>
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="sort" />
+                    <span>Sedang Promo</span>
+                  </label>
+                </div>
+              </div>
+            </aside>
+
+            {/* Konten Kelas */}
+            <div className="flex-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {loading
+                  ? Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton tipe="courses" key={i} />
+                    ))
+                  : course.map((items, i) => (
+                      <CardKelas item={items} key={i} />
+                    ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </FrontLayout>
