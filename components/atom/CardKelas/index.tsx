@@ -106,12 +106,12 @@ const CardKelas = ({ item, key }: CardKelasProps) => {
           </div>
 
           <div className="flex justify-between pt-6">
-            <button
-              type="submit"
-              className="bg-primary w-full py-3 rounded-lg text-18 font-medium border text-white border-primary hover:text-primary hover:bg-transparent hover:cursor-pointer transition duration-300 ease-in-out"
+            <Link
+              href={`/kelas/${item.id}`}
+              className="bg-primary w-full py-3 text-center rounded-lg text-18 font-medium border text-white border-primary hover:text-primary hover:bg-transparent hover:cursor-pointer transition duration-300 ease-in-out"
             >
               Lihat Kelas
-            </button>
+            </Link>
           </div>
         </div>
       </div>
