@@ -30,7 +30,7 @@ const Signin = () => {
       toast.success("Login Berhasil");
       setTimeout(() => {
         router.push("/admin");
-      }, 1500);
+      }, 1000);
     }
   };
 

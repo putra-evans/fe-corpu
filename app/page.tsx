@@ -2,7 +2,7 @@
 
 import {
   Contact,
-  Cook,
+  Tentang,
   Expert,
   Features,
   FrontLayout,
@@ -39,11 +39,11 @@ const Home = () => {
     <FrontLayout>
       <Hero />
       <Features />
-      <Cook />
+      <Tentang />
       <Expert />
-      <Gallery />
+      {/* <Gallery /> */}
       <Contact />
-      <Newsletter />
+      {/* <Newsletter /> */}
     </FrontLayout>
   );
 };

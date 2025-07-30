@@ -30,8 +30,7 @@ const Footer: FC = () => {
           <div className="col-span-2">
             <Logo />
             <p className="text-sm font-medium text-grey my-5 max-w-70%">
-              Open an account in minutes, get full financial control for much
-              longer.
+              Sistem Pembelajaran Pengembangan Kompetensi Secara Terintegrasi
             </p>
             <div className="flex gap-6 items-center">
               <Link
@@ -70,27 +69,7 @@ const Footer: FC = () => {
             </div>
           </div>
           <div className="col-span-2">
-            <div className="flex gap-20">
-              {footerlink.map((product, i) => (
-                <div key={i} className="group relative col-span-2">
-                  <p className="text-black text-xl font-semibold mb-9">
-                    {product.section}
-                  </p>
-                  <ul>
-                    {product.links.map((item, i) => (
-                      <li key={i} className="mb-3">
-                        <Link
-                          href={item.href}
-                          className="text-black/60 hover:text-black text-base font-normal mb-6"
-                        >
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <div className="flex gap-20"></div>
           </div>
           <div className="col-span-2 sm:col-span-6 md:col-span-2">
             <div className="flex flex-col gap-5">
@@ -100,7 +79,7 @@ const Footer: FC = () => {
                   className="text-primary text-3xl lg:text-2xl inline-block me-2"
                 />
                 <p className="text-black text-base">
-                  925 Filbert Street Pennsylvania 18072
+                  Jl. Raya Indarung No.km.12, Padang Besi
                 </p>
               </div>
               <Link href="tel:+1(909) 235-9814">
@@ -110,7 +89,7 @@ const Footer: FC = () => {
                     className="text-primary text-3xl lg:text-2xl inline-block me-2"
                   />
                   <p className="text-black/60 hover:text-black text-base">
-                    +1(909) 235-9814
+                    (0751) 72730
                   </p>
                 </div>
               </Link>
@@ -121,7 +100,7 @@ const Footer: FC = () => {
                     className="text-primary text-3xl lg:text-2xl inline-block me-2"
                   />
                   <p className="text-black/60 hover:text-black text-base">
-                    info@gmail.com
+                    diklat.provsumbar@gmail.com
                   </p>
                 </div>
               </Link>
@@ -130,12 +109,12 @@ const Footer: FC = () => {
         </div>
         <div className="border-t border-grey/15 py-5 flex flex-col sm:flex-row justify-between sm:items-center gap-5">
           <p className="text-sm text-black/70">
-            @2025 - Chef's kitchen. All Rights Reserved by{" "}
+            @2025 - Putra Evans. All Rights Reserved By{" "}
             <Link
-              href="https://getnextjstemplates.com/"
+              href="https://diskominfotik.sumbarprov.go.id/"
               className="hover:text-primary hover:underline"
             >
-              GetNextjsTemplates
+              TIM IT Diskominfotik
             </Link>
           </p>
 

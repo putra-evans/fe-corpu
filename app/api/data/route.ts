@@ -9,36 +9,35 @@ import { FooterLinkType } from "../../../types/footerlink";
 import { KelasType, KategoriKelasType } from "../../../types/kelas";
 
 const HeaderData: HeaderItem[] = [
+  { label: "Tentang", href: "/tentang" },
   { label: "Kelas", href: "/kelas" },
-  // { label: "Menu", href: "/#menu" },
   // { label: "Reserve Table", href: "/#reserve" },
   { label: "Docs", href: "/documentation" },
 ];
 
 const FeaturesData: FeaturesType[] = [
   {
-    imgSrc: "/images/Features/featureOne.svg",
-    heading: "Elegant Dining Atmosphere",
+    imgSrc: "/images/Features/materi.svg",
+    heading: "Materi Pelatihan yang Update",
     subheading:
-      "Enjoy a warm, refined space perfect for intimate dinners or small group gatherings.",
+      "Materi yang disediakan selalu terbaru yang relevan dengan zaman sekarang.",
   },
   {
-    imgSrc: "/images/Features/featureThree.svg",
-    heading: "Signature Chef Creations",
+    imgSrc: "/images/Features/mentor.svg",
+    heading: "Mentor yang Berpengalaman",
     subheading:
-      "Taste one-of-a-kind dishes crafted with passion by our top culinary team.",
+      "Pelatihan di disusun dan dibuat oleh mentor yang berpengalaman dalam bidangnya.",
   },
   {
-    imgSrc: "/images/Features/featureTwo.svg",
-    heading: "Fresh, Local Ingredients",
+    imgSrc: "/images/Features/sertifikat.svg",
+    heading: "Sertifikat Kelulusan",
     subheading:
-      "We use locally sourced goods daily for unmatched taste and quality.",
+      "Sertifikat yang diakui dan dikonversi ke jam pembelajaran (JP)",
   },
   {
-    imgSrc: "/images/Features/featureFour.svg",
-    heading: "Hassle-Free Reservations",
-    subheading:
-      "Reserve online in seconds or walk in anytime — we’re ready when you are.",
+    imgSrc: "/images/Features/belajar.svg",
+    heading: "Pembelajaran yang Fleksibel",
+    subheading: "Pembelajaran bisa dimana dan kapan saja secara mandiri.",
   },
 ];
 

@@ -4,7 +4,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import SignIn from "./SignIn";
 import ScrollToTop from "./ScrollToTop";
-import Cook from "./Cook";
+import Tentang from "./Tentang";
 import Expert from "./Expert";
 import Gallery from "./Gallery";
 import Contact from "./Contact";
@@ -22,7 +22,7 @@ export {
   SignIn,
   ScrollToTop,
   ErrorPage,
-  Cook,
+  Tentang,
   Expert,
   Gallery,
   Contact,
