@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy package.json dan install deps (dev + prod)
 COPY package*.json ./
 RUN rm -rf package-lock.json
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # RUN npm ci
 
