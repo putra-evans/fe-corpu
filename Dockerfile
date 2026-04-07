@@ -1,5 +1,6 @@
 # === Stage 1: Build Next.js ===
-FROM 10.5.49.40:5050/image-app/kominfotik-node-20.9-alpine AS builder
+# FROM 10.5.49.40:5050/image-app/kominfotik-node-20.9-alpine AS builder
+FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine AS builder
 
 WORKDIR /app
 
@@ -14,7 +15,8 @@ COPY . .
 RUN npm run build
 
 # === Stage 2: Runtime (lebih kecil & hanya prod deps) ===
-FROM 10.5.49.40:5050/image-app/kominfotik-node-20.9-alpine AS runner
+# FROM 10.5.49.40:5050/image-app/kominfotik-node-20.9-alpine AS runner
+FROM 10.5.44.50:5050/devops/base-images/kominfotik-nginx-1.21-openresty:latest AS runner
 
 WORKDIR /app
 
