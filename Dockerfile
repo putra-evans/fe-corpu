@@ -35,8 +35,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./next.config.js
 
 # Variabel environment (API base URL, dll)
-ARG NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+# ARG NEXT_PUBLIC_API_BASE_URL
+# ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
 # Gunakan user non-root (lebih aman)
 RUN addgroup -g 1001 nodejs && adduser -u 1001 -G nodejs -s /bin/sh -D nextjs
