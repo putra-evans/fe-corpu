@@ -1,47 +1,73 @@
-# === Stage 1: Build Next.js ===
-FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine AS builder
+# # === Stage 1: Build Next.js ===
+# FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine AS builder
 
+# WORKDIR /app
+
+# # Copy package.json dan install deps (dev + prod)
+# COPY package*.json ./
+# RUN rm -rf package-lock.json
+# RUN npm install --legacy-peer-deps
+
+# # RUN npm ci
+
+# # Copy source code
+# COPY . .
+# # FIX PERMISSION
+# RUN chmod -R 755 node_modules/.bin
+# # Build Next.js (SSR build disimpan di .next/)
+# RUN npm run build
+
+# # === Stage 2: Runtime (lebih kecil & hanya prod deps) ===
+# FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine AS runner
+
+# WORKDIR /app
+
+# # ENV NODE_ENV production
+# ENV NODE_ENV=production
+
+# # Salin hanya deps production
+# COPY package*.json ./
+# # RUN npm ci --omit=dev
+
+# # Copy hasil build dari stage builder
+# COPY --from=builder /app/.next ./.next
+# COPY --from=builder /app/public ./public
+# COPY --from=builder /app/next.config.js ./next.config.js
+
+# # Variabel environment (API base URL, dll)
+# # ARG NEXT_PUBLIC_API_BASE_URL
+# # ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+
+# # Gunakan user non-root (lebih aman)
+# RUN addgroup -g 1001 nodejs && adduser -u 1001 -G nodejs -s /bin/sh -D nextjs
+# USER nextjs
+
+# EXPOSE 3000
+
+# CMD ["npm", "run", "start"]
+
+
+
+# Gunakan image Node.js sebagai base image
+FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine
+
+# Setel direktori kerja di container
 WORKDIR /app
 
-# Copy package.json dan install deps (dev + prod)
-COPY package*.json ./
-RUN rm -rf package-lock.json
-RUN npm install --legacy-peer-deps
-
-# RUN npm ci
-
-# Copy source code
+# Copy semua file dari project ke dalam container
 COPY . .
-# FIX PERMISSION
-RUN chmod -R 755 node_modules/.bin
-# Build Next.js (SSR build disimpan di .next/)
+
+# Install dependencies aplikasi
+RUN npm install
+
+# Build aplikasi
 RUN npm run build
 
-# === Stage 2: Runtime (lebih kecil & hanya prod deps) ===
-FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine AS runner
+RUN ls -lha
+RUN cat .env
 
-WORKDIR /app
+# Jalankan aplikasi dengan perintah berikut
+CMD ["npm", "start"]
 
-# ENV NODE_ENV production
-ENV NODE_ENV=production
-
-# Salin hanya deps production
-COPY package*.json ./
-# RUN npm ci --omit=dev
-
-# Copy hasil build dari stage builder
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
-
-# Variabel environment (API base URL, dll)
-# ARG NEXT_PUBLIC_API_BASE_URL
-# ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-
-# Gunakan user non-root (lebih aman)
-RUN addgroup -g 1001 nodejs && adduser -u 1001 -G nodejs -s /bin/sh -D nextjs
-USER nextjs
-
+# Expose port 3000 untuk mengakses aplikasi Next.js
 EXPOSE 3000
-
-CMD ["npm", "run", "start"]
