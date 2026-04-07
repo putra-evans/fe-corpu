@@ -1,7 +1,9 @@
 stages:
   - image-building
   - deploy-dev
+  - manage-dev
   - deploy-prod
+  - manage-prod
 
 variables:
   CICD_BRANCH: main
