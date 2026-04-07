@@ -5,6 +5,9 @@ WORKDIR /app
 
 # Copy package.json dan install deps (dev + prod)
 COPY package*.json ./
+RUN rm -rf package-lock.json
+RUN npm install --verbose
+
 # RUN npm ci
 
 # Copy source code
