@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package.json dan install deps (dev + prod)
 COPY package*.json ./
-RUN npm ci
+# RUN npm ci
 
 # Copy source code
 COPY . .
@@ -24,7 +24,7 @@ ENV NODE_ENV=production
 
 # Salin hanya deps production
 COPY package*.json ./
-RUN npm ci --omit=dev
+# RUN npm ci --omit=dev
 
 # Copy hasil build dari stage builder
 COPY --from=builder /app/.next ./.next
