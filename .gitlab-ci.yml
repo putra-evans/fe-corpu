@@ -16,6 +16,6 @@ variables:
   SKIP_DEPLOY_DEV: "false"
 
 include:
-  - project: "configuration/deploy-apps"
+  - project: "devops/configuration/deploy-apps-internal"
     ref: master
     file: "/deploy.yml"
