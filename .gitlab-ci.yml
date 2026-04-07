@@ -1,0 +1,21 @@
+stages:
+  - image-building
+  - deploy-dev
+  - deploy-prod
+
+variables:
+  CICD_BRANCH: main
+  PORT_IN_CONTAINER: 3000
+  # Untuk environment development
+  SERVICES_PORT_DEV: 7702
+  SERVICES_ENV_DEV: deploy/dev.env
+  # Untuk environment production
+  SERVICES_PORT_PROD: 7702
+  SERVICES_ENV_PROD: deploy/prod.env
+  # Flag untuk skip deploy dev
+  SKIP_DEPLOY_DEV: "false"
+
+include:
+  - project: "configuration/deploy-apps"
+    ref: master
+    file: "/deploy.yml"
