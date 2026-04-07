@@ -19,7 +19,8 @@ FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine AS runner
 
 WORKDIR /app
 
-ENV NODE_ENV production
+# ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Salin hanya deps production
 COPY package*.json ./
