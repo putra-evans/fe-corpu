@@ -3,6 +3,7 @@ import useSWR from "swr";
 
 interface KategoriResponse {
   kategori: KategoriKelasType[];
+  data: [];
 }
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;

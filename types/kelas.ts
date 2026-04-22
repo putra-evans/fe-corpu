@@ -9,6 +9,7 @@ export type KelasType = {
   price: number;
   rating: number;
   created_at: string;
+  type: string;
 };
 export type KategoriKelasType = {
   id_kategori: number;

@@ -3,6 +3,7 @@ import useSWR from "swr";
 
 interface FavKelasResponse {
   favkelas: KelasType[];
+  data: [];
 }
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;

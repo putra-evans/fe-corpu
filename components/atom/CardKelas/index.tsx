@@ -8,7 +8,7 @@ import { FeaturesType } from "../../../types/features";
 import { Skeleton } from "../../../components";
 import { KelasType } from "@/types/kelas";
 interface CardKelasProps {
-  item: KelasType;
+  item: any;
   key: string;
 }
 
