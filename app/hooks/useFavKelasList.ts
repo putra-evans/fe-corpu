@@ -1,8 +1,8 @@
-import { KategoriKelasType } from "@/types/kelas";
+import { KelasType } from "@/types/kelas";
 import useSWR from "swr";
 
-interface KategoriResponse {
-  kategori: KategoriKelasType[];
+interface FavKelasResponse {
+  favkelas: KelasType[];
 }
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
@@ -13,15 +13,13 @@ const fetcher = async (endpoint: string) => {
   if (!res.ok) {
     throw new Error("Gagal mengambil data");
   }
-
   const data = await res.json();
-
   return data;
 };
 
-export const useKategoriList = () => {
-  const { data, error } = useSWR<KategoriResponse>(
-    "/api/course-category",
+export const useFavKelasList = () => {
+  const { data, error } = useSWR<FavKelasResponse>(
+    "/api/course/favorite",
     fetcher,
     {
       revalidateOnFocus: false,
@@ -29,7 +27,7 @@ export const useKategoriList = () => {
   );
 
   return {
-    kategoriList: data?.data ?? [],
+    favKelasList: data?.data ?? [],
     isLoading: !data && !error,
     isError: error,
   };

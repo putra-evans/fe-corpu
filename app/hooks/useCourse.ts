@@ -1,60 +1,81 @@
-// /hooks/useCourses.ts
 import { KategoriKelasType, KelasType } from "@/types/kelas";
-import useSWRInfinite from "swr/infinite";
+import useSWR from "swr";
 
 interface CourseResponse {
   data: KelasType[];
-  hasMore: boolean;
-  total: number;
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total_data: number;
+  };
   kategori: KategoriKelasType[];
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+
+const fetcher = async (endpoint: string) => {
+  const res = await fetch(`${baseURL}${endpoint}`);
+
+  if (!res.ok) {
+    throw new Error("Gagal mengambil data");
+  }
+
+  return res.json();
+};
 
 export const useCourses = ({
+  page,
+  perPage = 6,
   kategoriIds,
-  sortBy,
+  type,
+  search,
+  sortBy = "desc",
 }: {
-  kategoriIds: number[];
-  sortBy: string | null;
+  page: number;
+  perPage?: number;
+  kategoriIds: string[];
+  type?: string | null;
+  search?: string;
+  sortBy?: string | null;
 }) => {
-  const getKey = (
-    pageIndex: number,
-    previousPageData: CourseResponse | null
-  ) => {
-    if (previousPageData && !previousPageData.hasMore) return null;
+  const params = new URLSearchParams();
 
-    const params = new URLSearchParams();
-    params.set("page", String(pageIndex + 1));
-    params.set("limit", "6");
+  // wajib
+  params.set("page", String(page));
+  params.set("per_page", String(perPage));
 
-    if (kategoriIds.length > 0) {
-      params.set("kategori", kategoriIds.join(","));
-    }
+  // optional
+  if (kategoriIds.length > 0) {
+    params.set("category_id", kategoriIds.join(","));
+  }
 
-    if (sortBy) {
-      params.set("sort", sortBy);
-    }
+  if (type) {
+    params.set("type", type);
+  }
 
-    return `/api/kelas?${params.toString()}`;
-  };
+  if (search) {
+    params.set("search", search);
+  }
 
-  const { data, size, setSize, mutate, isLoading, isValidating } =
-    useSWRInfinite<CourseResponse>(getKey, fetcher);
+  if (sortBy) {
+    params.set("sort", sortBy);
+  }
 
-  const courses = data ? data.flatMap((page) => page.data) : [];
-  const hasMore = data?.[data.length - 1]?.hasMore ?? false;
-  const kategoriList = data?.[0]?.kategori ?? [];
+  const { data, error, isLoading, mutate } = useSWR<CourseResponse>(
+    `/api/course?${params.toString()}`,
+    fetcher
+  );
+
+  const url = `/api/course?${params.toString()}`;
 
   return {
-    courses,
-    kategoriList,
-    isLoadingInitialData: !data && isLoading,
-    isLoadingMore:
-      isLoading || (size > 0 && data && typeof data[size - 1] === "undefined"),
-    size,
-    setSize,
-    hasMore,
+    courses: data?.data ?? [],
+    kategoriList: data?.kategori ?? [],
+    total: data?.meta?.total_data ?? 0, // 🔥 FIX
+    totalPages: data?.meta?.last_page ?? 1, // 🔥 LANGSUNG DARI API
+    isLoading,
+    isError: error,
     mutate,
   };
 };

@@ -8,46 +8,37 @@ import { useCourses } from "../hooks/useCourse";
 import { useKategoriList } from "../hooks/useKategoriList";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useFavKelasList } from "../hooks/useFavKelasList";
 
 const Courses = () => {
-  const [kategoriIds, setKategoriIds] = useState<number[]>([]);
-  const [sortBy, setSortBy] = useState<string | null>("terbaru");
+  const [kategoriIds, setKategoriIds] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<string | null>("desc");
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  const {
-    courses,
-    isLoadingInitialData,
-    isLoadingMore,
-    setSize,
-    hasMore,
-    mutate,
-  } = useCourses({ kategoriIds, sortBy });
+  const { courses, total, isLoading } = useCourses({
+    page,
+    kategoriIds,
+    sortBy,
+    search,
+  });
 
   const { kategoriList, isLoading: isLoadingKategori } = useKategoriList();
+  const {
+    favKelasList,
+    isLoading: isLoadingFavKelas,
+    isError,
+  } = useFavKelasList();
 
   // Reset pagination saat filter berubah
   useEffect(() => {
-    setSize(1);
-  }, [kategoriIds, sortBy]);
+    setPage(1);
+  }, [kategoriIds, sortBy, search]);
 
-  const observer = useRef<IntersectionObserver | null>(null);
-  const lastCourseRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (isLoadingMore) return;
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setSize((prev) => prev + 1);
-        }
-      });
-
-      if (node) observer.current.observe(node);
-    },
-    [isLoadingMore, hasMore, setSize]
-  );
+  const totalPages = Math.ceil(total / 6);
 
   const handleKategoriChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
+    const value = e.target.value;
     const checked = e.target.checked;
     setKategoriIds((prev) =>
       checked ? [...prev, value] : prev.filter((id) => id !== value)
@@ -98,13 +89,13 @@ const Courses = () => {
             </h2>
           </div>
           <Slider {...settings}>
-            {isLoadingInitialData
+            {isLoadingFavKelas
               ? Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton tipe="courses" key={i} />
                 ))
-              : courses
+              : favKelasList
                   .slice(0, 5)
-                  .map((item, i) => <CardKelas item={item} key={i} />)}
+                  .map((item: any) => <CardKelas item={item} key={item.id} />)}
           </Slider>
         </div>
       </section>
@@ -131,18 +122,18 @@ const Courses = () => {
                         />
                         <span>All</span>
                       </label>
-                      {kategoriList.map((kategori) => (
+                      {kategoriList.map((item: any) => (
                         <label
-                          key={kategori.id_kategori}
+                          key={item.id}
                           className="flex items-center gap-2"
                         >
                           <input
                             type="checkbox"
-                            value={kategori.id_kategori}
+                            value={item.id}
                             onChange={handleKategoriChange}
-                            checked={kategoriIds.includes(kategori.id_kategori)}
+                            checked={kategoriIds.includes(item.id)}
                           />
-                          <span>{kategori.nama_kategori}</span>
+                          <span>{item.name}</span>
                         </label>
                       ))}
                     </>
@@ -161,8 +152,8 @@ const Courses = () => {
                         <input
                           type="radio"
                           value="baru"
-                          checked={sortBy === "baru"}
-                          onChange={() => handleSortChange("baru")}
+                          checked={sortBy === "desc"}
+                          onChange={() => handleSortChange("desc")}
                         />
                         <span>Baru Rilis</span>
                       </label>
@@ -170,8 +161,8 @@ const Courses = () => {
                         <input
                           type="radio"
                           value="terpopuler"
-                          checked={sortBy === "terpopuler"}
-                          onChange={() => handleSortChange("terpopuler")}
+                          checked={sortBy === "asc"}
+                          onChange={() => handleSortChange("asc")}
                         />
                         <span>Terpopuler</span>
                       </label>
@@ -182,24 +173,62 @@ const Courses = () => {
             </aside>
 
             {/* Konten Kelas */}
+
             <div className="flex-1">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {courses.map((item, i) => {
-                  if (i === courses.length - 1) {
-                    return (
-                      <div ref={lastCourseRef} key={i}>
-                        <CardKelas key={i} item={item} />
-                      </div>
-                    );
-                  }
-                  return <CardKelas key={i} item={item} />;
-                })}
-                {isLoadingMore &&
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton tipe="courses" key={`load-${i}`} />
-                  ))}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Cari kelas berdasarkan judul..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full border px-3 py-2 rounded-lg focus:outline-none focus:ring focus:ring-primary"
+                />
               </div>
-              {!isLoadingInitialData && courses.length === 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {isLoading
+                  ? Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton tipe="courses" key={i} />
+                    ))
+                  : courses.map((item: any) => (
+                      <CardKelas key={item.id} item={item} />
+                    ))}
+              </div>
+
+              {/* INI KHUSUS HALAMAN PAGINATION */}
+
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-6 gap-2 flex-wrap">
+                  <button
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    disabled={page === 1}
+                    onClick={() => setPage((prev) => prev - 1)}
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setPage(i + 1)}
+                      className={`px-3 py-1 border rounded ${
+                        page === i + 1 ? "bg-primary text-white" : ""
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    disabled={page === totalPages}
+                    onClick={() => setPage((prev) => prev + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+
+              {!isLoading && courses.length === 0 && (
                 <div className="text-center text-gray-500 mt-6 text-sm col-span-full">
                   Data tidak ditemukan.
                 </div>
