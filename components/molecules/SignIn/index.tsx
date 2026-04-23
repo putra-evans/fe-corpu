@@ -9,14 +9,18 @@ import GlobalLoading from "@/app/loading";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
+import { useSession } from "next-auth/react";
 
 const Signin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  const { update } = useSession();
+
   const loginUser = async () => {
     setIsLoading(true);
+
     const result = await signIn("credentials", {
       username: formik.values.username,
       password: formik.values.password,
@@ -24,13 +28,13 @@ const Signin = () => {
     });
 
     setIsLoading(false);
+
     if (!result?.ok) {
       toast.error(result?.error || "Periksa kembali username atau password");
     } else {
+      await update();
       toast.success("Login Berhasil");
-      setTimeout(() => {
-        router.push("/admin");
-      }, 1000);
+      router.push("/dashboard");
     }
   };
 

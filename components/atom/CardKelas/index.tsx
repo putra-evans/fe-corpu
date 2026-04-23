@@ -59,8 +59,8 @@ const CardKelas = ({ item, key }: CardKelasProps) => {
         <div className="relative rounded-3xl">
           <div className="w-full h-[200px] rounded-2xl overflow-hidden relative">
             <Image
-              // src={item.thumbnail || "/assets/img/no_image.png"}
-              src="/images/noimage.png"
+              src={item.thumbnail || "/assets/img/no_image.png"}
+              // src="/images/noimage.png"
               alt="course-image"
               fill
               className="object-cover"

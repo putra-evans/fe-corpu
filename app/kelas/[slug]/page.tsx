@@ -56,7 +56,8 @@ export default function CourseDetail() {
           <div className="lg:col-span-3">
             <div className="rounded-xl overflow-hidden mb-6">
               <img
-                src="/images/noimage.png"
+                // src="/images/noimage.png"
+                src={course.thumbnail || "/assets/img/no_image.png"}
                 alt="Pelatihan Kepemimpinan"
                 className="w-full h-auto object-cover"
               />

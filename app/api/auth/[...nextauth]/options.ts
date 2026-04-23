@@ -36,7 +36,7 @@ export const options: NextAuthOptions = {
             }
 
             return {
-              id: user.pns_id,
+              accessToken: null,
               username: user.nip,
               nama_asn: user.nama_pns,
             };
@@ -44,11 +44,11 @@ export const options: NextAuthOptions = {
             throw new Error("Pegawai Tidak Ditemukan");
           }
         } else {
-          const apiUrl = process.env.LOGIN_ESPJ;
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
           if (!apiUrl) {
             throw new Error("NEXT_PUBLIC_API_URL is not defined");
           }
-          const res = await fetch(apiUrl, {
+          const res = await fetch(`${apiUrl}/api/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -67,23 +67,19 @@ export const options: NextAuthOptions = {
           const data = await res.json();
 
           // Validasi struktur response
-          if (
-            data.response === 1 &&
-            Array.isArray(data.result) &&
-            data.result.length > 0
-          ) {
-            const user = data.result[0];
+          if (data.status === true && data.data.token != "") {
+            const user = data.data.user;
 
             // Validasi properti penting user (jaga-jaga kalau data API tidak konsisten)
-            if (!user.pegawai || !user.username || !user.nama_asn) {
+            if (!user.nip || !user.username || !user.name) {
               throw new Error("Data user tidak lengkap");
             }
 
             // Return user object yang akan diproses oleh NextAuth (masuk ke JWT/callback)
             return {
-              id: user.pegawai,
+              accessToken: data.data.token,
               username: user.username,
-              nama_asn: user.nama_asn,
+              nama_asn: user.name,
             };
           }
 
@@ -116,9 +112,9 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
         token.username = user.username;
         token.nama_asn = user.nama_asn;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
@@ -127,10 +123,10 @@ export const options: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          id: token.id,
           username: token.username,
           nama_asn: token.nama_asn,
         },
+        accessToken: token.accessToken,
       };
     },
   },
