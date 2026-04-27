@@ -6,26 +6,26 @@ interface FavKelasResponse {
   data: [];
 }
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
-
 const fetcher = async (endpoint: string) => {
-  const res = await fetch(`${baseURL}${endpoint}`);
+  const res = await fetch(`/api/proxy${endpoint}`);
 
   if (!res.ok) {
     throw new Error("Gagal mengambil data");
   }
-  const data = await res.json();
-  return data;
+
+  return res.json();
 };
 
 export const useFavKelasList = () => {
   const { data, error } = useSWR<FavKelasResponse>(
-    "/api/course/favorite",
+    "/course/favorite",
     fetcher,
     {
       revalidateOnFocus: false,
     }
   );
+
+  console.log("DATA:", data);
 
   return {
     favKelasList: data?.data ?? [],

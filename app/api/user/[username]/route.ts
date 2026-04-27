@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { username: string } }
+  context: { params: Promise<{ username: string }> }
 ) {
   try {
+    const { username } = await context.params;
     const res = await fetch(
-      `${process.env.SIMPEG_DETAIL_PEGAWAI}/${params.username}`,
+      `${process.env.SIMPEG_DETAIL_PEGAWAI}/${username}`,
       {
         // optional caching
         next: { revalidate: 60 },

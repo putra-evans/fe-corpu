@@ -1,49 +1,28 @@
 import useSWR from "swr";
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
-
 const fetcher = async (endpoint: string) => {
-  console.log("endpoint", endpoint);
-
-  const res = await fetch(`${baseURL}${endpoint}`);
-
-  console.log(res);
+  const res = await fetch(`/api/proxy${endpoint}`);
 
   if (!res.ok) {
     throw new Error("Gagal mengambil data");
   }
 
-  const data = await res.json();
-  return data;
+  return res.json();
 };
 
 export const useKelasBySlug = (slug: string, initialData?: any) => {
-  console.log("ini slug", slug);
-
   const { data, error } = useSWR(
-    `/api/course/${slug}`, // 🔥 sesuaikan endpoint
+    slug ? `/course/${slug}` : null, // 🔥 aman & tanpa /api
     fetcher,
     {
-      //   fallbackData: initialData,
+      fallbackData: initialData,
       revalidateOnFocus: false,
     }
   );
 
   return {
-    course: data?.data ?? null, // 🔥 ambil dari data.data
+    course: data?.data ?? null,
     isLoading: !data && !error,
     isError: error,
   };
 };
-
-// async function getCourseBySlug(slug: string) {
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_API_URL}/api/course/${slug}`
-//   );
-
-//   if (!res.ok) return null;
-
-//   const json = await res.json();
-
-//   return json.data; // 🔥 WAJIB
-// }

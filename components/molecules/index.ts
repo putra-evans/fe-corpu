@@ -15,6 +15,7 @@ import ErrorPage from "./ErrorPage";
 import ToastProvider from "./ToastProvider";
 import UserDashboardLayout from "./UserDashboardLayout";
 import ReactQueryProvider from "./ReactQueryProvider";
+import DynamicForm from "./DynamicForm";
 
 export {
   Features,
@@ -33,4 +34,5 @@ export {
   ToastProvider,
   UserDashboardLayout,
   ReactQueryProvider,
+  DynamicForm,
 };

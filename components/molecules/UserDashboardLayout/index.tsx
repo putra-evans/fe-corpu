@@ -116,8 +116,6 @@ const UserDashboardLayout = ({ children }: any) => {
               </p>
             </div>
           </div>
-
-          <button className="px-4 py-2 border rounded-lg text-sm">Edit</button>
         </div>
         <hr className="text-orange-600" />
 

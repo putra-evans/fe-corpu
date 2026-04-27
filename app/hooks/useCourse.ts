@@ -12,10 +12,8 @@ interface CourseResponse {
   kategori: KategoriKelasType[];
 }
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
-
 const fetcher = async (endpoint: string) => {
-  const res = await fetch(`${baseURL}${endpoint}`);
+  const res = await fetch(`/api/proxy${endpoint}`);
 
   if (!res.ok) {
     throw new Error("Gagal mengambil data");
@@ -63,11 +61,9 @@ export const useCourses = ({
   }
 
   const { data, error, isLoading, mutate } = useSWR<CourseResponse>(
-    `/api/course?${params.toString()}`,
+    `/course?${params.toString()}`,
     fetcher
   );
-
-  const url = `/api/course?${params.toString()}`;
 
   return {
     courses: data?.data ?? [],

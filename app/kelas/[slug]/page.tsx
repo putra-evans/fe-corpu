@@ -4,9 +4,11 @@ import Image from "next/image";
 import { KelasType } from "@/types/kelas";
 import { FrontLayout } from "@/components";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useKelasBySlug } from "@/app/hooks/useKelasBySlug";
 import GlobalLoading from "@/app/loading";
+import { useState } from "react";
+import { DynamicForm } from "@/components/molecules/index";
 
 interface Props {
   params: {
@@ -25,6 +27,9 @@ const formatDate = (date: string) => {
 
 export default function CourseDetail() {
   const params = useParams();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const slug = params.slug as string;
 
   const { course, isLoading } = useKelasBySlug(slug);
@@ -32,6 +37,8 @@ export default function CourseDetail() {
   if (isLoading) return <GlobalLoading />;
 
   if (!course) return <div>Data tidak ditemukan</div>;
+
+  console.log(course);
 
   return (
     <FrontLayout>
@@ -159,17 +166,26 @@ export default function CourseDetail() {
                 <li>♾ Akses Selamanya</li>
               </ul>
               <div className="flex justify-between pt-6">
-                <Link
-                  href=""
-                  className="bg-primary w-full py-3 text-center rounded-lg text-18 font-medium border text-white border-primary hover:text-primary hover:bg-transparent hover:cursor-pointer transition duration-300 ease-in-out"
+                <button
+                  onClick={() => setOpen(true)}
+                  className="bg-primary w-full py-3 rounded-lg text-white"
                 >
                   DAFTAR
-                </Link>
+                </button>
               </div>
             </aside>
           </div>
         </div>
       </div>
+      {/* {open && (
+        <Modal onClose={() => setOpen(false)}>
+          <DynamicForm
+            fields={course.requirements}
+            slug={course.slug}
+            onClose={() => setOpen(false)}
+          />
+        </Modal>
+      )} */}
     </FrontLayout>
   );
 }
