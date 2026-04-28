@@ -16,6 +16,8 @@ import ToastProvider from "./ToastProvider";
 import UserDashboardLayout from "./UserDashboardLayout";
 import ReactQueryProvider from "./ReactQueryProvider";
 import DynamicForm from "./DynamicForm";
+import Modal from "./Modal";
+import NoRequirement from "./NoRequirement";
 
 export {
   Features,
@@ -35,4 +37,6 @@ export {
   UserDashboardLayout,
   ReactQueryProvider,
   DynamicForm,
+  Modal,
+  NoRequirement,
 };

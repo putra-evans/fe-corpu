@@ -49,7 +49,7 @@ const UserDashboardLayout = ({ children }: any) => {
   return (
     <div className="w-full max-w-[1400px] mx-auto grid grid-cols-12 gap-6 min-h-screen">
       {/* 🔹 Sidebar */}
-      <aside className="col-span-12 md:col-span-3">
+      {/* <aside className="col-span-12 md:col-span-3">
         <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl shadow-md border border-gray-100 h-2/4">
           <p className="text-xs font-semibold text-gray-400 mb-4 tracking-wider">
             MENU
@@ -93,6 +93,39 @@ const UserDashboardLayout = ({ children }: any) => {
             })}
           </div>
         </div>
+      </aside> */}
+      <aside className="col-span-12 md:col-span-3">
+        <div className="sticky top-28">
+          <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl shadow-md border border-gray-100">
+            <p className="text-xs font-semibold text-gray-400 mb-4 tracking-wider">
+              MENU
+            </p>
+
+            <div className="flex flex-col gap-2">
+              {menus.map((item) => {
+                const isActive = pathname.startsWith(item.href);
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`group flex items-center gap-3 px-4 py-3 rounded-xl 
+              transition-all duration-300 ease-out font-medium
+              ${
+                isActive
+                  ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm"
+                  : "text-gray-600 hover:bg-gradient-to-r hover:from-primary/10 hover:to-primary/5 hover:text-primary"
+              }`}
+                  >
+                    <Icon icon={item.icon} width="18" />
+
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </aside>
 
       {/* 🔹 Content */}
@@ -101,18 +134,18 @@ const UserDashboardLayout = ({ children }: any) => {
         <div className="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-              {session.user.nama_asn.charAt(0)}
+              {session?.user?.nama_asn?.charAt(0) ?? "?"}
             </div>
             <div>
               <p className="text-xs text-gray-500">Selamat Datang</p>
               <h2 className="font-semibold text-gray-800 leading-tight text-lg">
-                {session.user.nama_asn}
+                {session?.user?.nama_asn}
               </h2>
               <p className=" text-gray-800 leading-tight">
-                {session.user.username}
+                {session?.user?.username}
               </p>
               <p className="font-semibold text-gray-800 leading-tight">
-                {session.accessToken}
+                {session?.accessToken}
               </p>
             </div>
           </div>

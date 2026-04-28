@@ -159,7 +159,7 @@ const Header: React.FC = () => {
                   <div className="p-5 border-b border-gray-200/50 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                        {session.user.nama_asn.charAt(0)}
+                        {session.user.nama_asn?.charAt(0) ?? "?"}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Selamat Datang</p>

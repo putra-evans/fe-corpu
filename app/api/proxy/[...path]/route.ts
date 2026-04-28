@@ -29,25 +29,35 @@ async function handleRequest(
 ) {
   try {
     const { path } = await context.params;
-
     const joinedPath = path.join("/");
-
     const { searchParams } = new URL(req.url);
-
     const url = `${BASE_URL}/${joinedPath}?${searchParams.toString()}`;
-
     const token = req.headers.get("authorization");
 
-    console.log("PATH:", path);
-    console.log("URL:", url);
+    const contentType = req.headers.get("content-type");
+
+    let body;
+
+    if (method !== "GET") {
+      if (contentType?.includes("multipart/form-data")) {
+        body = await req.formData();
+      } else {
+        body = await req.text();
+      }
+    }
+
+    const headers: any = {
+      ...(token && { Authorization: token }),
+    };
+
+    if (!contentType?.includes("multipart/form-data")) {
+      headers["Content-Type"] = "application/json";
+    }
 
     const res = await fetch(url, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: token }),
-      },
-      body: method !== "GET" ? await req.text() : undefined,
+      headers,
+      body,
     });
 
     const data = await res.json();

@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { signOut } from "next-auth/react";
+import { keepPreviousData } from "@tanstack/react-query";
 
 type Params = {
   status?: string;
@@ -24,6 +26,12 @@ const fetchKelasSaya = async (params: Params) => {
     },
   });
 
+  // ✅ HANDLE 401 DI SINI
+  if (res.status === 401) {
+    await signOut({ callbackUrl: "/" });
+    throw new Error("Unauthorized");
+  }
+
   if (!res.ok) {
     throw new Error("Gagal ambil kelas");
   }
@@ -46,6 +54,6 @@ export const useKelasSaya = (params: Params) => {
     queryFn: () => fetchKelasSaya(params),
     enabled: !!params.token,
     staleTime: 1000 * 60 * 5,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };

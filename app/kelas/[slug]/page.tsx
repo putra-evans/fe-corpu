@@ -8,7 +8,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useKelasBySlug } from "@/app/hooks/useKelasBySlug";
 import GlobalLoading from "@/app/loading";
 import { useState } from "react";
-import { DynamicForm } from "@/components/molecules/index";
+import {
+  DynamicForm,
+  Modal,
+  NoRequirement,
+} from "@/components/molecules/index";
 
 interface Props {
   params: {
@@ -177,15 +181,24 @@ export default function CourseDetail() {
           </div>
         </div>
       </div>
-      {/* {open && (
+      {open && (
         <Modal onClose={() => setOpen(false)}>
-          <DynamicForm
-            fields={course.requirements}
-            slug={course.slug}
-            onClose={() => setOpen(false)}
-          />
+          {course.requirements?.length === 0 ? (
+            <NoRequirement
+              slug={course.slug}
+              id={course.id}
+              onClose={() => setOpen(false)}
+            />
+          ) : (
+            <DynamicForm
+              fields={course.requirements}
+              slug={course.slug}
+              id={course.id}
+              onClose={() => setOpen(false)}
+            />
+          )}
         </Modal>
-      )} */}
+      )}
     </FrontLayout>
   );
 }

@@ -7,9 +7,10 @@ import { useEffect } from "react";
 
 const DataDiri = () => {
   const { data: session, status } = useSession();
-  const { data: user, isLoading } = useUserQuery(session?.user?.username);
 
-  // console.log("data user", user);
+  const username = session?.user?.username ?? undefined;
+
+  const { data: user, isLoading } = useUserQuery(username ?? undefined);
 
   if (status === "loading") return <div>Loading session...</div>;
   if (isLoading) return <div>Loading user...</div>;
@@ -43,7 +44,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Nama Lengkap</p>
               <p className="font-medium text-gray-800 uppercase">
-                {user?.result?.nama_pns}
+                {(user as any)?.nama_pns}
               </p>
             </div>
           </div>
@@ -57,7 +58,7 @@ const DataDiri = () => {
             />
             <div>
               <p className="text-gray-400 text-xs">NIP</p>
-              <p className="font-medium text-gray-800">{user?.result?.nip}</p>
+              <p className="font-medium text-gray-800">{(user as any)?.nip}</p>
             </div>
           </div>
 
@@ -71,15 +72,18 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Tempat, Tanggal Lahir</p>
               <p className="font-medium text-gray-800">
-                {user?.result?.tmpt_lahir
+                {(user as any)?.tmpt_lahir
                   ?.toLowerCase()
-                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                  .replace(/\b\w/g, (c: string) => c.toUpperCase())}
                 ,{" "}
-                {new Date(user?.result?.tgl_lahir).toLocaleDateString("id-ID", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })}
+                {new Date((user as any)?.tgl_lahir).toLocaleDateString(
+                  "id-ID",
+                  {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  }
+                )}
               </p>
             </div>
           </div>
@@ -94,7 +98,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Jenis Kelamin</p>
               <p className="font-medium text-gray-800 capitalize">
-                {user?.result?.gender_nm}
+                {(user as any)?.gender_nm}
               </p>
             </div>
           </div>
@@ -104,7 +108,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Agama</p>
               <p className="font-medium text-gray-800 capitalize">
-                {user?.result?.agama_nm}
+                {(user as any)?.agama_nm}
               </p>
             </div>
           </div>
@@ -118,7 +122,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">status</p>
               <p className="font-medium text-gray-800 capitalize">
-                {user?.result?.cpns_pns_nm}
+                {(user as any)?.cpns_pns_nm}
               </p>
             </div>
           </div>
@@ -144,7 +148,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Nama Dinas</p>
               <p className="font-medium text-gray-800 uppercase">
-                {user?.result?.opd_nm}
+                {(user as any)?.opd_nm}
               </p>
             </div>
           </div>
@@ -159,7 +163,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Bidang</p>
               <p className="font-medium text-gray-800">
-                {user?.result?.sub_opd_nm}
+                {(user as any)?.sub_opd_nm}
               </p>
             </div>
           </div>
@@ -175,7 +179,7 @@ const DataDiri = () => {
               <p className="text-gray-400 text-xs">Jenis Jabatan</p>
 
               <p className="font-medium text-gray-800">
-                {user?.result?.jns_jbtn_nm}
+                {(user as any)?.jns_jbtn_nm}
               </p>
             </div>
           </div>
@@ -190,7 +194,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Nama Jabatan</p>
               <p className="font-medium text-gray-800 capitalize">
-                {user?.result?.jabatan_nm}
+                {(user as any)?.jabatan_nm}
               </p>
             </div>
           </div>
@@ -204,7 +208,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Golongan</p>
               <p className="font-medium text-gray-800 capitalize">
-                {user?.result?.golru_nm}
+                {(user as any)?.golru_nm}
               </p>
             </div>
           </div>
@@ -218,7 +222,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">status</p>
               <p className="font-medium text-gray-800 capitalize">
-                {user?.result?.status_pns_nm}
+                {(user as any)?.status_pns_nm}
               </p>
             </div>
           </div>

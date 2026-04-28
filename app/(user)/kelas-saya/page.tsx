@@ -21,7 +21,8 @@ const KelasSaya = () => {
     sort,
   });
 
-  const meta = data?.meta;
+  // const meta = data?.meta;
+  const meta = (data as any)?.meta;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -109,14 +110,14 @@ const KelasSaya = () => {
             />
           ))}
         </div>
-      ) : data?.data?.length === 0 ? (
+      ) : (data as any)?.data?.length === 0 ? (
         <div className="text-center text-gray-400 py-10">
           Tidak ada kelas ditemukan
         </div>
       ) : (
         <>
           <div className="space-y-4">
-            {data?.data?.map((kelas: any) => (
+            {(data as any)?.data?.map((kelas: any) => (
               <div
                 key={kelas.enrollment_id}
                 className="relative bg-white border border-gray-200 rounded-2xl p-6 flex justify-between items-start shadow-sm hover:shadow-md transition"
