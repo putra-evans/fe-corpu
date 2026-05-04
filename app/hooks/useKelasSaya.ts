@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { keepPreviousData } from "@tanstack/react-query";
+import { KelasResponse } from "@/types/kelas";
 
 type Params = {
   status?: string;
@@ -11,7 +12,7 @@ type Params = {
   token?: string;
 };
 
-const fetchKelasSaya = async (params: Params) => {
+const fetchKelasSaya = async (params: Params): Promise<KelasResponse> => {
   const query = new URLSearchParams({
     status: params.status || "",
     per_page: String(params.per_page || 10),
@@ -26,7 +27,6 @@ const fetchKelasSaya = async (params: Params) => {
     },
   });
 
-  // ✅ HANDLE 401 DI SINI
   if (res.status === 401) {
     await signOut({ callbackUrl: "/" });
     throw new Error("Unauthorized");
@@ -36,13 +36,13 @@ const fetchKelasSaya = async (params: Params) => {
     throw new Error("Gagal ambil kelas");
   }
 
-  const data = await res.json();
+  const data: KelasResponse = await res.json();
 
   return data;
 };
 
 export const useKelasSaya = (params: Params) => {
-  return useQuery({
+  return useQuery<KelasResponse>({
     queryKey: [
       "kelas-saya",
       params.page,

@@ -11,7 +11,8 @@ import { KelasType, KategoriKelasType } from "../../../types/kelas";
 const HeaderData: HeaderItem[] = [
   { label: "Tentang", href: "/tentang" },
   { label: "Kelas", href: "/kelas" },
-  // { label: "Reserve Table", href: "/#reserve" },
+  { label: "Coaching ", href: "/coaching " },
+  { label: "Mentoring ", href: "/mentoring " },
   { label: "Docs", href: "/documentation" },
 ];
 

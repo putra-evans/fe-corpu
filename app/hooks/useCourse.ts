@@ -24,7 +24,7 @@ const fetcher = async (endpoint: string) => {
 
 export const useCourses = ({
   page,
-  perPage = 6,
+  perPage = 9,
   kategoriIds,
   type,
   search,
@@ -68,8 +68,8 @@ export const useCourses = ({
   return {
     courses: data?.data ?? [],
     kategoriList: data?.kategori ?? [],
-    total: data?.meta?.total_data ?? 0, // 🔥 FIX
-    totalPages: data?.meta?.last_page ?? 1, // 🔥 LANGSUNG DARI API
+    total: data?.meta?.total_data ?? 0,
+    totalPages: data?.meta?.last_page ?? 1,
     isLoading,
     isError: error,
     mutate,

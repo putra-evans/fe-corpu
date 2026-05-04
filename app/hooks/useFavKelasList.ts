@@ -2,8 +2,7 @@ import { KelasType } from "@/types/kelas";
 import useSWR from "swr";
 
 interface FavKelasResponse {
-  favkelas: KelasType[];
-  data: [];
+  data: KelasType[];
 }
 
 const fetcher = async (endpoint: string) => {
@@ -24,8 +23,6 @@ export const useFavKelasList = () => {
       revalidateOnFocus: false,
     }
   );
-
-  console.log("DATA:", data);
 
   return {
     favKelasList: data?.data ?? [],

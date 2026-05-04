@@ -2,8 +2,7 @@ import { KategoriKelasType } from "@/types/kelas";
 import useSWR from "swr";
 
 interface KategoriResponse {
-  kategori: KategoriKelasType[];
-  data: [];
+  data: KategoriKelasType[];
 }
 
 const fetcher = async (endpoint: string) => {

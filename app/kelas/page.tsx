@@ -15,12 +15,14 @@ const Courses = () => {
   const [sortBy, setSortBy] = useState<string | null>("desc");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [type, setType] = useState<string | null>("E");
 
   const { courses, total, isLoading } = useCourses({
     page,
     kategoriIds,
     sortBy,
     search,
+    type,
   });
 
   const { kategoriList, isLoading: isLoadingKategori } = useKategoriList();
@@ -47,6 +49,10 @@ const Courses = () => {
 
   const handleSortChange = (value: string) => {
     setSortBy((prev) => (prev === value ? null : value));
+  };
+
+  const handleTypeChange = (value: string) => {
+    setType((prev) => (prev === value ? null : value));
   };
 
   const settings = {
@@ -95,7 +101,7 @@ const Courses = () => {
                 ))
               : favKelasList
                   .slice(0, 5)
-                  .map((item: any) => <CardKelas item={item} key={item.id} />)}
+                  .map((item) => <CardKelas item={item} key={item.id} />)}
           </Slider>
         </div>
       </section>
@@ -106,7 +112,37 @@ const Courses = () => {
             {/* Sidebar */}
             <aside className="w-[250px] lg:flex-shrink-0 lg:sticky top-24 self-start">
               <div className="bg-white rounded-xl shadow p-4">
-                <h2 className="font-bold text-lg mb-4">Kategori Kelas</h2>
+                <h2 className="font-bold text-lg  mb-4">Jenis</h2>
+                <div className="space-y-2">
+                  {isLoadingKategori ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton tipe="kategori_kelas" key={i} />
+                    ))
+                  ) : (
+                    <>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="E"
+                          checked={type === "E"}
+                          onChange={(e) => handleTypeChange(e.target.value)}
+                        />
+                        <span>E-learning</span>
+                      </label>
+
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="B"
+                          checked={type === "B"}
+                          onChange={(e) => handleTypeChange(e.target.value)}
+                        />
+                        <span>Blended Learning</span>
+                      </label>
+                    </>
+                  )}
+                </div>
+                <h2 className="font-bold text-lg mb-4 mt-6">Kategori Kelas</h2>
                 <div className="space-y-2">
                   {isLoadingKategori ? (
                     Array.from({ length: 5 }).map((_, i) => (
@@ -122,7 +158,7 @@ const Courses = () => {
                         />
                         <span>All</span>
                       </label>
-                      {kategoriList.map((item: any) => (
+                      {kategoriList.map((item) => (
                         <label
                           key={item.id}
                           className="flex items-center gap-2"
@@ -151,20 +187,21 @@ const Courses = () => {
                       <label className="flex items-center gap-2">
                         <input
                           type="radio"
-                          value="baru"
+                          value="desc"
                           checked={sortBy === "desc"}
-                          onChange={() => handleSortChange("desc")}
+                          onChange={(e) => handleSortChange(e.target.value)}
                         />
                         <span>Baru Rilis</span>
                       </label>
+
                       <label className="flex items-center gap-2">
                         <input
                           type="radio"
-                          value="terpopuler"
+                          value="asc"
                           checked={sortBy === "asc"}
-                          onChange={() => handleSortChange("asc")}
+                          onChange={(e) => handleSortChange(e.target.value)}
                         />
-                        <span>Terpopuler</span>
+                        <span>Terlama</span>
                       </label>
                     </>
                   )}
@@ -189,7 +226,7 @@ const Courses = () => {
                   ? Array.from({ length: 6 }).map((_, i) => (
                       <Skeleton tipe="courses" key={i} />
                     ))
-                  : courses.map((item: any) => (
+                  : courses.map((item) => (
                       <CardKelas key={item.id} item={item} />
                     ))}
               </div>

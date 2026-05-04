@@ -1,4 +1,9 @@
 import useSWR from "swr";
+import { DetailKelasType } from "@/types/kelas";
+
+type CourseDetailResponse = {
+  data: DetailKelasType;
+};
 
 const fetcher = async (endpoint: string) => {
   const res = await fetch(`/api/proxy${endpoint}`);
@@ -10,9 +15,12 @@ const fetcher = async (endpoint: string) => {
   return res.json();
 };
 
-export const useKelasBySlug = (slug: string, initialData?: any) => {
-  const { data, error } = useSWR(
-    slug ? `/course/${slug}` : null, // 🔥 aman & tanpa /api
+export const useKelasBySlug = (
+  slug: string,
+  initialData?: CourseDetailResponse
+) => {
+  const { data, error } = useSWR<CourseDetailResponse>(
+    slug ? `/course/${slug}` : null,
     fetcher,
     {
       fallbackData: initialData,

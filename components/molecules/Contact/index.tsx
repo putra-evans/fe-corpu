@@ -72,7 +72,6 @@ const Contact = () => {
       })
       .catch((error) => {
         setLoader(false);
-        console.log(error.message);
       });
   };
   return (

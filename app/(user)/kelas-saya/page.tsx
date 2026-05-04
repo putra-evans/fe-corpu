@@ -20,9 +20,9 @@ const KelasSaya = () => {
     status,
     sort,
   });
-
-  // const meta = data?.meta;
-  const meta = (data as any)?.meta;
+  const meta = data?.meta;
+  const kelasList = data?.data ?? [];
+  const lastPage = meta?.last_page ?? 1;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -110,14 +110,14 @@ const KelasSaya = () => {
             />
           ))}
         </div>
-      ) : (data as any)?.data?.length === 0 ? (
+      ) : data?.data?.length === 0 ? (
         <div className="text-center text-gray-400 py-10">
           Tidak ada kelas ditemukan
         </div>
       ) : (
         <>
           <div className="space-y-4">
-            {(data as any)?.data?.map((kelas: any) => (
+            {kelasList.map((kelas) => (
               <div
                 key={kelas.enrollment_id}
                 className="relative bg-white border border-gray-200 rounded-2xl p-6 flex justify-between items-start shadow-sm hover:shadow-md transition"
@@ -228,22 +228,17 @@ const KelasSaya = () => {
               ))}
 
             {/* Ellipsis */}
-            {meta?.last_page > 5 && <span className="px-2">...</span>}
+            {(meta?.last_page ?? 0) > 5 && <span className="px-2">...</span>}
 
             {/* Last */}
-            {meta?.last_page > 5 && (
-              <button
-                onClick={() => setPage(meta.last_page)}
-                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
-              >
-                {meta.last_page}
-              </button>
+            {(meta?.last_page ?? 0) > 5 && (
+              <button onClick={() => setPage(lastPage)}>{lastPage}</button>
             )}
 
             {/* Next */}
             <button
-              disabled={page === meta?.last_page}
-              onClick={() => setPage(page + 1)}
+              disabled={page === lastPage}
+              onClick={() => setPage(lastPage)}
               className="px-3 py-2 rounded-lg border disabled:opacity-50"
             >
               {">"}

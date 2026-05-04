@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
+import { User, UserResponse } from "@/types/user";
 
-const fetchUser = async (username: string) => {
+const fetchUser = async (username: string): Promise<User> => {
   const res = await fetch(`/api/user/${username}`);
 
   if (res.status === 401) {
@@ -12,12 +13,13 @@ const fetchUser = async (username: string) => {
   if (!res.ok) {
     throw new Error("Gagal ambil data user");
   }
-  const json = await res.json();
+
+  const json: UserResponse = await res.json();
   return json.result;
 };
 
 export const useUserQuery = (username?: string) => {
-  return useQuery({
+  return useQuery<User>({
     queryKey: ["user", username],
     queryFn: () => {
       if (!username) throw new Error("Username tidak ada");

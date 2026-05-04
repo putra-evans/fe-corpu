@@ -1,50 +1,17 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
-import { FeaturesType } from "../../../types/features";
-// import FeaturesSkeleton from "../../Skeleton/Features";
-import { Skeleton } from "../../../components";
-import { KelasType } from "@/types/kelas";
+// import { Icon } from "@iconify/react";
+// import { useEffect, useState } from "react";
+// import { FeaturesType } from "../../../types/features";
+// // import FeaturesSkeleton from "../../Skeleton/Features";
+// import { Skeleton } from "../../../components";
+// import { KelasType } from "@/types/kelas";
 interface CardKelasProps {
   item: any;
-  key: string;
 }
 
-const CardKelas = ({ item, key }: CardKelasProps) => {
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const halfStars = rating % 1 >= 0.5 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStars;
-    return (
-      <div>
-        {Array.from({ length: fullStars }).map((_, index) => (
-          <Icon
-            key={`full-${index}`}
-            icon="tabler:star-filled"
-            className="text-yellow-500 text-xl inline-block"
-          />
-        ))}
-
-        {halfStars > 0 && (
-          <Icon
-            key="half-star"
-            icon="tabler:star-half-filled"
-            className="text-yellow-500 text-xl inline-block"
-          />
-        )}
-
-        {Array.from({ length: emptyStars }).map((_, index) => (
-          <Icon
-            key={`empty-${index}`}
-            icon="tabler:star-filled"
-            className="text-gray-400 text-xl inline-block"
-          />
-        ))}
-      </div>
-    );
-  };
+const CardKelas = ({ item }: CardKelasProps) => {
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("id-ID", {
       day: "2-digit",
@@ -99,14 +66,6 @@ const CardKelas = ({ item, key }: CardKelasProps) => {
             {formatDate(item.start_date)} - {formatDate(item.end_date)}
           </div>
 
-          {/* FOOTER */}
-          <div className="flex items-center justify-between mt-3">
-            {/* <span className="text-lg font-bold text-gray-800">Rp200.000</span>
-
-            <button className="bg-orange-500 text-white px-4 py-2 rounded-xl text-sm hover:bg-orange-600 transition">
-              Lihat
-            </button> */}
-          </div>
           <div className="flex justify-between pt-6">
             <Link
               href={item.slug ? `/kelas/${item.slug}` : "#"}

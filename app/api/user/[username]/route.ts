@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { User } from "@/types/user";
 
 export async function GET(
   req: Request,
@@ -21,8 +22,7 @@ export async function GET(
       );
     }
 
-    const data = await res.json();
-
+    const data: User = await res.json();
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ message: "Server error" }, { status: 500 });

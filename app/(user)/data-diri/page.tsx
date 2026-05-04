@@ -44,7 +44,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Nama Lengkap</p>
               <p className="font-medium text-gray-800 uppercase">
-                {(user as any)?.nama_pns}
+                {user?.nama_pns}
               </p>
             </div>
           </div>
@@ -58,7 +58,7 @@ const DataDiri = () => {
             />
             <div>
               <p className="text-gray-400 text-xs">NIP</p>
-              <p className="font-medium text-gray-800">{(user as any)?.nip}</p>
+              <p className="font-medium text-gray-800">{user?.nip}</p>
             </div>
           </div>
 
@@ -72,18 +72,19 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Tempat, Tanggal Lahir</p>
               <p className="font-medium text-gray-800">
-                {(user as any)?.tmpt_lahir
-                  ?.toLowerCase()
-                  .replace(/\b\w/g, (c: string) => c.toUpperCase())}
-                ,{" "}
-                {new Date((user as any)?.tgl_lahir).toLocaleDateString(
-                  "id-ID",
-                  {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  }
-                )}
+                {user?.tmpt_lahir
+                  ? user.tmpt_lahir
+                      .toLowerCase()
+                      .replace(/\b\w/g, (c) => c.toUpperCase())
+                  : "-"}
+
+                {user?.tgl_lahir
+                  ? new Date(user.tgl_lahir).toLocaleDateString("id-ID", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "-"}
               </p>
             </div>
           </div>
@@ -98,7 +99,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Jenis Kelamin</p>
               <p className="font-medium text-gray-800 capitalize">
-                {(user as any)?.gender_nm}
+                {user?.gender_nm}
               </p>
             </div>
           </div>
@@ -108,7 +109,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Agama</p>
               <p className="font-medium text-gray-800 capitalize">
-                {(user as any)?.agama_nm}
+                {user?.agama_nm}
               </p>
             </div>
           </div>
@@ -122,7 +123,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">status</p>
               <p className="font-medium text-gray-800 capitalize">
-                {(user as any)?.cpns_pns_nm}
+                {user?.cpns_pns_nm}
               </p>
             </div>
           </div>
@@ -148,7 +149,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Nama Dinas</p>
               <p className="font-medium text-gray-800 uppercase">
-                {(user as any)?.opd_nm}
+                {user?.opd_nm}
               </p>
             </div>
           </div>
@@ -162,9 +163,7 @@ const DataDiri = () => {
             />
             <div>
               <p className="text-gray-400 text-xs">Bidang</p>
-              <p className="font-medium text-gray-800">
-                {(user as any)?.sub_opd_nm}
-              </p>
+              <p className="font-medium text-gray-800">{user?.sub_opd_nm}</p>
             </div>
           </div>
 
@@ -178,9 +177,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Jenis Jabatan</p>
 
-              <p className="font-medium text-gray-800">
-                {(user as any)?.jns_jbtn_nm}
-              </p>
+              <p className="font-medium text-gray-800">{user?.jns_jbtn_nm}</p>
             </div>
           </div>
 
@@ -194,7 +191,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Nama Jabatan</p>
               <p className="font-medium text-gray-800 capitalize">
-                {(user as any)?.jabatan_nm}
+                {user?.jabatan_nm}
               </p>
             </div>
           </div>
@@ -208,7 +205,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">Golongan</p>
               <p className="font-medium text-gray-800 capitalize">
-                {(user as any)?.golru_nm}
+                {user?.golru_nm}
               </p>
             </div>
           </div>
@@ -222,7 +219,7 @@ const DataDiri = () => {
             <div>
               <p className="text-gray-400 text-xs">status</p>
               <p className="font-medium text-gray-800 capitalize">
-                {(user as any)?.status_pns_nm}
+                {user?.status_pns_nm}
               </p>
             </div>
           </div>

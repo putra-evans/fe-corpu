@@ -43,7 +43,6 @@ const Header: React.FC = () => {
         console.error("Error fetching services:", error);
       }
     };
-    console.log(session?.accessToken);
 
     fetchData();
   }, []);
@@ -89,7 +88,7 @@ const Header: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logout`, {
+      await fetch(`/api/proxy/logout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session?.accessToken}`,
