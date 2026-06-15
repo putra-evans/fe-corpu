@@ -15,7 +15,7 @@ const Courses = () => {
   const [sortBy, setSortBy] = useState<string | null>("desc");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [type, setType] = useState<string | null>("E");
+  const [type, setType] = useState<string | null>();
 
   const { courses, total, isLoading } = useCourses({
     page,
