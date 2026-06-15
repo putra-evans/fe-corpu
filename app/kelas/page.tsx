@@ -43,7 +43,7 @@ const Courses = () => {
     const value = e.target.value;
     const checked = e.target.checked;
     setKategoriIds((prev) =>
-      checked ? [...prev, value] : prev.filter((id) => id !== value)
+      checked ? [...prev, value] : prev.filter((id) => id !== value),
     );
   };
 
