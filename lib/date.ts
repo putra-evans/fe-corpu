@@ -10,7 +10,7 @@ export const formatTanggal = (date?: string) => {
   });
 };
 
-export const getStatusPendaftaran = (start?: string, end?: string) => {
+export const getStatusPembelajaran = (start?: string, end?: string) => {
   if (!start || !end) return null;
 
   const now = new Date();
@@ -23,7 +23,7 @@ export const getStatusPendaftaran = (start?: string, end?: string) => {
       color: "bg-gray-400",
       text: "text-gray-500",
       diff: Math.ceil(
-        (startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        (startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
       ),
       label: "Dibuka",
     };
@@ -44,8 +44,35 @@ export const getStatusPendaftaran = (start?: string, end?: string) => {
     color: "bg-green-500",
     text: "text-red-500",
     diff: Math.ceil(
-      (endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      (endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
     ),
     label: "Tutup",
+  };
+};
+
+export const getStatusPendaftaran = (start?: string) => {
+  if (!start) return null;
+
+  const now = new Date();
+  const startDate = new Date(start);
+
+  if (now < startDate) {
+    return {
+      status: "Buka",
+      color: "bg-green-500",
+      text: "text-green-500",
+      diff: Math.ceil(
+        (startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+      ),
+      label: "Hari Lagi",
+    };
+  }
+
+  return {
+    status: "Ditutup",
+    color: "bg-red-500",
+    text: "text-red-500",
+    diff: 0,
+    label: "Ditutup",
   };
 };

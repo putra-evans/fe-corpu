@@ -39,17 +39,18 @@ export const options: NextAuthOptions = {
         // Validasi struktur response
         if (data.status === true && data.data.token != "") {
           const user = data.data.user;
+          console.log("DATA RESPONSE LOGIN", user);
 
           // Validasi properti penting user (jaga-jaga kalau data API tidak konsisten)
-          if (!user.nip || !user.username || !user.name) {
+          if (!user.nip || !credentials.username || !user.name) {
             throw new Error("Data user tidak lengkap");
           }
 
           // Return user object yang akan diproses oleh NextAuth (masuk ke JWT/callback)
           return {
-            id: user.id || user.username,
+            id: credentials.username,
             accessToken: data.data.token,
-            username: user.username,
+            username: credentials.username,
             nama_asn: user.name,
           };
         }

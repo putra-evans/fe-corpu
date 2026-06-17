@@ -9,7 +9,11 @@ import { useKelasBySlug } from "@/app/hooks/useKelasBySlug";
 import GlobalLoading from "@/app/loading";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
-import { formatTanggal, getStatusPendaftaran } from "@/lib/date";
+import {
+  formatTanggal,
+  getStatusPembelajaran,
+  getStatusPendaftaran,
+} from "@/lib/date";
 import { activityConfig, requirementConfig } from "@/lib/syaratKelas";
 
 import {
@@ -17,6 +21,7 @@ import {
   Modal,
   NoRequirement,
 } from "@/components/molecules/index";
+import { log } from "console";
 
 // interface Props {
 //   params: {
@@ -39,7 +44,8 @@ export default function CourseDetail() {
 
   if (!course) return <div>Data tidak ditemukan</div>;
 
-  const status = getStatusPendaftaran(course?.start_date, course?.end_date);
+  const status = getStatusPembelajaran(course?.start_date, course?.end_date);
+  const statusPendaftaran = getStatusPendaftaran(course?.start_date);
 
   return (
     <FrontLayout>
@@ -55,8 +61,8 @@ export default function CourseDetail() {
           {course.title}
         </h1>
         <p className="text-gray-500 text-sm mb-4">
-          🏛 {course.category} 📅 {formatTanggal(course.start_date)} -{" "}
-          {formatTanggal(course.end_date)}
+          🏛 {course.category} 📅 Mulai dari {formatTanggal(course.start_date)}{" "}
+          - {formatTanggal(course.end_date)}
         </p>
         <hr className="my-6 border-t border-orange-300" />
 
@@ -186,38 +192,75 @@ export default function CourseDetail() {
           </div>
 
           <div className="lg:flex-shrink-0 lg:sticky top-24 self-start ">
+            <div className="mb-4 p-4 rounded-xl bg-gradient-to-r from-blue-400 to-indigo-500 text-white shadow-lg">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm text-blue-100">Periode Pembelajaran</p>
+
+                  <div className="mt-1">
+                    <p className="text-xl font-bold">
+                      {formatTanggal(course?.start_date)}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-blue-100">
+                      <div className="h-px w-4 bg-blue-200" />
+                      <span className="text-xs">sampai</span>
+                      <div className="h-px w-4 bg-blue-200" />
+                    </div>
+
+                    <p className="text-lg font-semibold">
+                      {formatTanggal(course?.end_date)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white/20 p-3 rounded-full">
+                  <Icon icon="mdi:school-outline" width="28" />
+                </div>
+              </div>
+
+              <div className="mt-4 bg-white/10 rounded-lg p-3 flex items-center gap-2">
+                <Icon icon="mdi:calendar-range" width="50" />
+                <p className="text-sm font-semibold">
+                  Silahkan persiapkan diri Anda untuk memulai pembelajaran
+                </p>
+              </div>
+            </div>
+
             <div className="mb-4 p-4 rounded-xl bg-white shadow-sm border border-gray-200">
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-gray-500">Batas Pendaftaran</p>
                   <p className="text-lg font-semibold text-gray-800">
-                    {formatTanggal(course?.end_date)}
+                    {formatTanggal(course?.start_date)}
                   </p>
                 </div>
 
-                {status && (
+                {statusPendaftaran && (
                   <span
-                    className={`px-4 py-1 text-white text-sm rounded-full ${status.color}`}
+                    className={`px-4 py-1 text-white text-sm rounded-full ${statusPendaftaran.color}`}
                   >
-                    {status.status}
+                    {statusPendaftaran.status}
                   </span>
                 )}
               </div>
 
               {/* Countdown */}
-              {status && status.diff > 0 && (
+              {statusPendaftaran && statusPendaftaran.diff > 0 && (
                 <div className="flex items-center gap-2 mt-2">
                   <Icon
                     icon="mdi:bell-alert"
-                    className={status.text}
+                    className={statusPendaftaran.text}
                     width="18"
                   />
-                  <p className={`text-sm ${status.text}`}>
-                    {status.label} {status.diff} hari lagi!
+                  <p className={`text-sm ${statusPendaftaran.text}`}>
+                    {statusPendaftaran.label} {statusPendaftaran.diff} hari
+                    lagi!
                   </p>
                 </div>
               )}
             </div>
+
             <aside className="lg:col-span-1 border bg-white shadow-sm  border-gray-200  rounded-xl p-4 h-fit">
               <h3 className="text-base font-semibold mb-3">
                 Program ini termasuk:
@@ -246,14 +289,28 @@ export default function CourseDetail() {
                   );
                 })}
               </ul>
-              <div className="flex justify-between pt-6">
-                <button
-                  onClick={() => setOpen(true)}
-                  className="bg-primary w-full py-3 rounded-lg text-white"
-                >
-                  DAFTAR
-                </button>
-              </div>
+
+              {statusPendaftaran?.status === "Ditutup" ? (
+                <div className="flex items-center gap-2 mt-2">
+                  <Icon
+                    icon="mdi:bell-alert"
+                    className={statusPendaftaran.text}
+                    width="18"
+                  />
+                  <p className={`text-sm italic ${statusPendaftaran.text}`}>
+                    Kelas sudah tidak tersedia!
+                  </p>
+                </div>
+              ) : (
+                <div className="flex justify-between pt-6">
+                  <button
+                    onClick={() => setOpen(true)}
+                    className="bg-primary w-full py-3 rounded-lg text-white"
+                  >
+                    DAFTAR
+                  </button>
+                </div>
+              )}
             </aside>
           </div>
         </div>

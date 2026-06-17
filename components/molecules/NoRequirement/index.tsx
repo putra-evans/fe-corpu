@@ -1,24 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { useSession } from "next-auth/react";
 
 const NoRequirement = ({ slug, id, onClose }: any) => {
   const [loading, setLoading] = useState(false);
+  const { data: session, status } = useSession();
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/proxy/course/${slug}/daftar`, {
+      const res = await fetch(`/api/proxy/course/${id}/enroll`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${session?.accessToken}`,
+        },
       });
 
-      if (!res.ok) throw new Error("Gagal daftar");
+      if (!res.ok) {
+        const data = await res.json();
+        console.log(data);
 
-      alert("Berhasil daftar 🎉");
+        throw new Error(data.message || "Gagal daftar");
+      }
+
+      toast.success("Berhasil daftar");
       onClose();
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -43,14 +54,22 @@ const NoRequirement = ({ slug, id, onClose }: any) => {
       </p>
 
       {/* Button */}
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="bg-[#DF6853] text-white px-6 py-2.5 rounded-xl font-medium 
+      {status === "unauthenticated" ? (
+        <div className="mt-6 border border-red-200 bg-red-50 px-3 py-1 rounded-2xl">
+          <p className="text-md text-red-500  font-semibold text-center">
+            Silahkan Login Terlebih Dahulu
+          </p>
+        </div>
+      ) : (
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="bg-[#DF6853] text-white px-6 py-2.5 rounded-xl font-medium 
           hover:scale-105 transition disabled:opacity-50"
-      >
-        {loading ? "Memproses..." : "Daftar Sekarang"}
-      </button>
+        >
+          {loading ? "Memproses..." : "Daftar Sekarang"}
+        </button>
+      )}
     </div>
   );
 };
