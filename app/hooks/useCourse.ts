@@ -62,7 +62,7 @@ export const useCourses = ({
 
   const { data, error, isLoading, mutate } = useSWR<CourseResponse>(
     `/course?${params.toString()}`,
-    fetcher
+    fetcher,
   );
 
   return {

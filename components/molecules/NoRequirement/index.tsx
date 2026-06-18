@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const NoRequirement = ({ slug, id, onClose }: any) => {
   const [loading, setLoading] = useState(false);
   const { data: session, status } = useSession();
 
+  const router = useRouter();
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -26,7 +28,10 @@ const NoRequirement = ({ slug, id, onClose }: any) => {
         throw new Error(data.message || "Gagal daftar");
       }
 
-      toast.success("Berhasil daftar");
+      toast.success(
+        "Berhasil daftar, anda dapat melihatnya di halaman kelas saya",
+      );
+      router.push("/kelas-saya");
       onClose();
     } catch (err: any) {
       toast.error(err.message);

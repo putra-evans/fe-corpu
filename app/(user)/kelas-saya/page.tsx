@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useKelasSaya } from "@/app/hooks/useKelasSaya";
+import { useRouter } from "next/navigation";
+import { Keania_One } from "next/font/google";
 
 const KelasSaya = () => {
   const { data: session } = useSession();
@@ -12,10 +14,12 @@ const KelasSaya = () => {
   const [status, setStatus] = useState("");
   const [sort, setSort] = useState("");
 
+  const router = useRouter();
+
   const { data, isLoading, error } = useKelasSaya({
     token: session?.accessToken,
     page,
-    per_page: 10,
+    per_page: 5,
     search: debouncedSearch,
     status,
     sort,
@@ -191,7 +195,10 @@ const KelasSaya = () => {
 
                 {/* Right */}
                 <div className="z-10 flex flex-col items-end gap-3">
-                  <button className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-5 py-2 rounded-xl text-sm font-medium shadow hover:scale-105 transition">
+                  <button
+                    className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-5 py-2 rounded-xl text-sm font-medium shadow hover:scale-105 transition"
+                    onClick={() => router.push(`/kelas-saya/${kelas.slug}`)}
+                  >
                     Lihat Detail
                   </button>
                 </div>

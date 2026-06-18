@@ -1,5 +1,6 @@
 export type KelasType = {
   id: string;
+  course_id: string;
   category_id: string;
   title: string;
   slug: string;
@@ -24,6 +25,7 @@ export type KategoriKelasType = {
 export type DetailKelasType = {
   id: string;
   title: string;
+  type_label: string;
   type: string;
   category: string;
   access_type: string;
@@ -49,6 +51,8 @@ export interface ActivitySummary {
 
 export interface Kelas {
   enrollment_id: string;
+  course_id: string;
+  slug: string;
   title: string;
   thumbnail?: string;
   status: string;
