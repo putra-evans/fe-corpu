@@ -18,7 +18,7 @@ export type CourseType = {
 };
 
 export type ActivityResponse = {
-  course: CourseType[];
+  course: CourseType;
   data: ListActivityType[];
   meta: {
     current_page: number;

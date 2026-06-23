@@ -227,7 +227,8 @@ export default function KelasSayaDashboard() {
               Kelas Berjalan
             </h2>
             <button
-              onClick={() => router.push("/kelas-saya")}
+              // onClick={() => router.push("/kelas-saya")}
+              onClick={() => {}}
               className="flex items-center gap-1 text-xs font-medium text-teal-600 hover:underline"
             >
               Lihat semua <ChevronRight size={13} />
@@ -242,7 +243,8 @@ export default function KelasSayaDashboard() {
                 <RunningCourseCard
                   key={c.id}
                   course={c}
-                  onClick={() => router.push(`/kelas-saya/${c.slug}`)}
+                  // onClick={() => router.push(`/kelas-saya/${c.slug}`)}
+                  onClick={() => {}}
                 />
               ))}
             </div>
@@ -265,7 +267,8 @@ export default function KelasSayaDashboard() {
                 <UpcomingCourseCard
                   key={c.id}
                   course={c}
-                  onClick={() => router.push(`/kelas-saya/${c.slug}`)}
+                  // onClick={() => router.push(`/kelas-saya/${c.slug}`)}
+                  onClick={() => {}}
                 />
               ))}
             </div>

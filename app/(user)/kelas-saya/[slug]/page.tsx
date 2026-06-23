@@ -39,6 +39,7 @@ import getYoutubeEmbedUrl from "@/lib/youtube";
 import { useFinishActivity } from "@/app/hooks/useFinishActivity";
 import ActivityTextModal from "../../components/ActivityTextModal";
 import QuizModal from "../../components/QuizModal";
+import CertificateModal from "../../components/CertificateModal";
 
 type ActivityListItem = {
   id: string;
@@ -106,16 +107,18 @@ export default function ClassDetailPage() {
   const [selectedQuiz, setSelectedQuiz] = useState<ActivityListItem | null>(
     null,
   );
+  const [selectedCertificate, setSelectedCertificate] =
+    useState<boolean>(false);
 
   const [openActivityId, setOpenActivityId] = useState<string>();
   const [highlightId, setHighlightId] = useState<string | null>(null);
-  const [finalExam, setFinalExam] = useState<{
-    completed: boolean;
-    score: number | null;
-  }>({
-    completed: false,
-    score: null,
-  });
+  // const [finalExam, setFinalExam] = useState<{
+  //   completed: boolean;
+  //   score: number | null;
+  // }>({
+  //   completed: false,
+  //   score: null,
+  // });
 
   const { data: activity } = useActivity({
     course_id: course?.id || "",
@@ -130,6 +133,8 @@ export default function ClassDetailPage() {
     });
 
   if (isLoading) return <GlobalLoading />;
+
+  console.log("activity", activity);
 
   const rawList: any = activity?.data;
   const activities: ActivityListItem[] = (
@@ -159,16 +164,16 @@ export default function ClassDetailPage() {
   const done = activities.filter((a) => a.is_completed).length;
   const percent = total ? Math.round((done / total) * 100) : 0;
 
-  const certUnlocked = finalExam.completed && (finalExam.score ?? 0) >= 70;
+  const certUnlocked = activity?.course?.progress === 100;
 
   const continueLabel =
     done < total
       ? "Lanjutkan Belajar"
-      : !finalExam.completed
+      : !certUnlocked
         ? "Mulai Ujian Akhir"
-        : (finalExam.score ?? 0) < 70
-          ? "Ulangi Ujian"
-          : "Lihat Sertifikat";
+        : certUnlocked
+          ? "Selesai"
+          : "";
 
   const handleContinue = () => {
     const next = activities.find((a) => !a.is_completed);
@@ -183,18 +188,18 @@ export default function ClassDetailPage() {
       setTimeout(() => setHighlightId(null), 1400);
       return;
     }
-    const target =
-      !finalExam.completed || (finalExam.score ?? 0) < 70
-        ? "stage-exam"
-        : "stage-cert";
-    setHighlightId(target === "stage-exam" ? "exam" : "cert");
-    setTimeout(
-      () =>
-        document
-          .getElementById(target)
-          ?.scrollIntoView({ behavior: "smooth", block: "center" }),
-      50,
-    );
+    // const target =
+    //   !finalExam.completed || (finalExam.score ?? 0) < 70
+    //     ? "stage-exam"
+    //     : "stage-cert";
+    // setHighlightId(target === "stage-exam" ? "exam" : "cert");
+    // setTimeout(
+    //   () =>
+    //     document
+    //       .getElementById(target)
+    //       ?.scrollIntoView({ behavior: "smooth", block: "center" }),
+    //   50,
+    // );
     setTimeout(() => setHighlightId(null), 1400);
   };
 
@@ -212,6 +217,10 @@ export default function ClassDetailPage() {
     const url =
       d?.content?.file_url || d?.content?.video_url || d?.content?.url;
     if (url) window.open(url, "_blank");
+  };
+
+  const handleDownloadCertificate = () => {
+    setSelectedCertificate(true);
   };
 
   const r = 42;
@@ -353,7 +362,7 @@ export default function ClassDetailPage() {
                             : "text-slate-800"
                         }`}
                       >
-                        {a.title}
+                        {a.type_label}
                       </p>
                       {isLocked && (
                         <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
@@ -386,6 +395,9 @@ export default function ClassDetailPage() {
                       )}
                       {showDetail && (
                         <div className="space-y-3">
+                          <h3 className="text-sm font-medium text-slate-800">
+                            Judul Materi : {detail?.title}
+                          </h3>
                           {detail?.description && (
                             <div
                               className="text-sm text-slate-600 text-justify"
@@ -665,7 +677,8 @@ export default function ClassDetailPage() {
                 </div>
                 <button
                   disabled={!certUnlocked}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                  onClick={handleDownloadCertificate}
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5  font-semibold transition ${
                     certUnlocked
                       ? "bg-orange-600 text-white hover:bg-orange-700"
                       : "cursor-not-allowed border border-slate-200 text-slate-300"
@@ -692,6 +705,12 @@ export default function ClassDetailPage() {
         activityId={selectedQuiz?.id}
         courseId={course?.id}
         token={session?.accessToken}
+      />
+      <CertificateModal
+        open={!!selectedCertificate}
+        onClose={() => setSelectedCertificate(false)}
+        courseId={course?.id || ""}
+        token={session?.accessToken || ""}
       />
     </div>
   );
