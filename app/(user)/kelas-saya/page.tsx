@@ -194,14 +194,20 @@ const KelasSaya = () => {
                 </div>
 
                 {/* Right */}
-                <div className="z-10 flex flex-col items-end gap-3">
-                  <button
-                    className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-5 py-2 rounded-xl text-sm font-medium shadow hover:scale-105 transition"
-                    onClick={() => router.push(`/kelas-saya/${kelas.slug}`)}
-                  >
-                    Lihat Detail
-                  </button>
-                </div>
+                {kelas.timeline_status !== "upcoming" ? (
+                  <div className="z-10 flex flex-col items-end gap-3">
+                    <button
+                      className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-5 py-2 rounded-xl text-sm font-medium shadow hover:scale-105 transition"
+                      onClick={() => router.push(`/kelas-saya/${kelas.slug}`)}
+                    >
+                      Lihat Detail
+                    </button>
+                  </div>
+                ) : (
+                  <div className="z-10 flex flex-col items-end gap-3">
+                    <span className="text-sm text-red-500">Segera Hadir</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>

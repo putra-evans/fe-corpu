@@ -22,6 +22,10 @@ import {
   Award,
   User2,
   Loader2,
+  Eye,
+  FilesIcon,
+  RectangleEllipsis,
+  CheckCircle,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useKelasBySlug } from "@/app/hooks/useKelasBySlug";
@@ -31,14 +35,16 @@ import ImageViewer from "@/components/molecules/ImageViewer";
 import { useSession } from "next-auth/react";
 import { useActivity } from "@/app/hooks/useActivity";
 import { useDetailActivity } from "@/app/hooks/useDetailActivity";
+import getYoutubeEmbedUrl from "@/lib/youtube";
+import { useFinishActivity } from "@/app/hooks/useFinishActivity";
+import ActivityTextModal from "../../components/ActivityTextModal";
+import QuizModal from "../../components/QuizModal";
 
-// Confirmed against a real API response. Add fields here as you confirm
-// the shape of other activity types (video, quiz, exam, link...).
 type ActivityListItem = {
   id: string;
   title: string;
   description?: string | null;
-  type: string; // e.g. "material_file" — match on substrings, real enum unconfirmed
+  type: string;
   type_label?: string;
   order?: number;
   is_required?: boolean;
@@ -71,19 +77,18 @@ function formatFileSize(bytes?: number) {
   return `${size.toFixed(i > 0 && size < 10 ? 1 : 0)} ${units[i]}`;
 }
 
-// Icon/label per activity type. Matched by substring since we've only
-// confirmed "material_file" so far — widen/adjust once you share examples
-// of video/quiz/exam/link types.
 function getActivityVisual(type: string) {
   const t = type?.toLowerCase() || "";
   if (t.includes("file"))
-    return { Icon: FileText, action: "Unduh", ActionIcon: Download };
+    return { Icon: FilesIcon, action: "Unduh", ActionIcon: Download };
   if (t.includes("video"))
     return { Icon: Video, action: "Tonton", ActionIcon: Play };
   if (t.includes("quiz"))
     return { Icon: ListChecks, action: "Mulai Kuis", ActionIcon: Play };
-  if (t.includes("exam"))
-    return { Icon: GraduationCap, action: "Mulai Ujian", ActionIcon: Play };
+  if (t.includes("text"))
+    return { Icon: FileText, action: "Lihat Materi", ActionIcon: Eye };
+  if (t.includes("survey"))
+    return { Icon: RectangleEllipsis, action: "Isi Survey", ActionIcon: Play };
   if (t.includes("link"))
     return { Icon: Link2, action: "Buka", ActionIcon: ExternalLink };
   return { Icon: FileText, action: "Buka", ActionIcon: ExternalLink };
@@ -96,9 +101,12 @@ export default function ClassDetailPage() {
 
   const slug = params.slug as string;
   const { course, isLoading } = useKelasBySlug(slug);
+  const finishMutation = useFinishActivity();
+  const [selectedText, setSelectedText] = useState<ActivityDetail | null>(null);
+  const [selectedQuiz, setSelectedQuiz] = useState<ActivityListItem | null>(
+    null,
+  );
 
-  // The single activity row that's currently expanded. Also doubles as the
-  // activity_id sent to useDetailActivity so the two never get out of sync.
   const [openActivityId, setOpenActivityId] = useState<string>();
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [finalExam, setFinalExam] = useState<{
@@ -123,8 +131,6 @@ export default function ClassDetailPage() {
 
   if (isLoading) return <GlobalLoading />;
 
-  // Defensive: handle both a bare array and a wrapped { activities: [...] }
-  // shape, in case the list endpoint structures things differently.
   const rawList: any = activity?.data;
   const activities: ActivityListItem[] = (
     Array.isArray(rawList)
@@ -141,11 +147,9 @@ export default function ClassDetailPage() {
         (a.order ?? 0) - (b.order ?? 0),
     );
 
-  // detailActivity.data is a SINGLE object (confirmed), not a list.
+  const detailData = detailActivity?.data as any;
   const detail: ActivityDetail | undefined =
-    detailActivity?.data && !Array.isArray(detailActivity.data)
-      ? detailActivity.data
-      : undefined;
+    detailData && !Array.isArray(detailData) ? detailData : undefined;
 
   const handleToggleActivity = (id: string) => {
     setOpenActivityId((prev) => (prev === id ? undefined : id));
@@ -155,15 +159,7 @@ export default function ClassDetailPage() {
   const done = activities.filter((a) => a.is_completed).length;
   const percent = total ? Math.round((done / total) * 100) : 0;
 
-  const examUnlocked = total > 0 && done === total;
   const certUnlocked = finalExam.completed && (finalExam.score ?? 0) >= 70;
-
-  const toggleExam = () => {
-    setFinalExam((prev) => {
-      const completed = !prev.completed;
-      return { completed, score: completed ? (prev.score ?? 82) : null };
-    });
-  };
 
   const continueLabel =
     done < total
@@ -202,14 +198,17 @@ export default function ClassDetailPage() {
     setTimeout(() => setHighlightId(null), 1400);
   };
 
-  const handleOpenContent = (a: ActivityListItem, d?: ActivityDetail) => {
-    if (
-      a.type?.toLowerCase().includes("quiz") ||
-      a.type?.toLowerCase().includes("exam")
-    ) {
-      router.push(`/kelas-saya/${slug}/kuis/${a.id}`); // TODO: confirm real route
+  const handleOpenContent = async (a: ActivityListItem, d?: ActivityDetail) => {
+    if (a.type?.toLowerCase().includes("text")) {
+      setSelectedText(d || null);
       return;
     }
+
+    if (a.type?.toLowerCase().includes("quiz")) {
+      setSelectedQuiz(a);
+      return;
+    }
+
     const url =
       d?.content?.file_url || d?.content?.video_url || d?.content?.url;
     if (url) window.open(url, "_blank");
@@ -218,6 +217,36 @@ export default function ClassDetailPage() {
   const r = 42;
   const c = 2 * Math.PI * r;
   const offset = c * (1 - percent / 100);
+
+  const finishModule = (id: string) => {
+    finishMutation.mutate(
+      {
+        courseId: course!.id,
+        activityId: id,
+      },
+      {
+        onSuccess: () => {
+          // cari activity berikutnya
+          const currentIndex = activities.findIndex((item) => item.id === id);
+
+          const nextActivity = activities[currentIndex + 1];
+
+          if (nextActivity) {
+            setOpenActivityId(nextActivity.id);
+
+            setTimeout(() => {
+              document
+                .getElementById(`activity-${nextActivity.id}`)
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+            }, 300);
+          }
+        },
+      },
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-8 rounded-lg">
@@ -270,29 +299,45 @@ export default function ClassDetailPage() {
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Activity list */}
           <div className="space-y-3 lg:col-span-2">
-            {activities.map((a) => {
+            {activities.map((a, index) => {
+              const prevActivity = activities[index - 1];
+
+              const isLocked = index > 0 && !prevActivity?.is_completed;
               const isOpen = openActivityId === a.id;
               const { Icon, action, ActionIcon } = getActivityVisual(a.type);
               const showDetail =
                 isOpen && !isDetailLoading && detail && detail.id === a.id;
+              const isQuiz = a.type?.toLowerCase().includes("quiz");
 
               return (
                 <div
                   id={`activity-${a.id}`}
                   key={a.id}
-                  className={`overflow-hidden rounded-2xl border border-slate-200 bg-white transition ${
-                    highlightId === a.id ? "ring-2 ring-teal-200" : ""
-                  }`}
+                  className={`
+                      overflow-hidden rounded-2xl border transition
+                      ${
+                        isLocked
+                          ? "border-slate-100 bg-slate-50 opacity-70"
+                          : "border-slate-200 bg-white"
+                      }
+                    ${highlightId === a.id ? " ring-2 ring-teal-200" : ""}
+                  `}
                 >
                   <button
-                    onClick={() => handleToggleActivity(a.id)}
+                    onClick={() => {
+                      if (!isLocked) {
+                        handleToggleActivity(a.id);
+                      }
+                    }}
                     className="flex w-full items-center gap-3 px-5 py-4 text-left"
                   >
-                    <span className="shrink-0 text-slate-300">
-                      {a.is_completed ? (
-                        <CheckCircle2 size={20} className="text-teal-600" />
+                    <span className="shrink-0">
+                      {isLocked ? (
+                        <Lock size={20} className="text-slate-400" />
+                      ) : a.is_completed ? (
+                        <CheckCircle2 size={20} className="text-slate-500" />
                       ) : (
-                        <Circle size={20} />
+                        <Circle size={20} className="text-slate-300" />
                       )}
                     </span>
 
@@ -310,10 +355,12 @@ export default function ClassDetailPage() {
                       >
                         {a.title}
                       </p>
-                      <p className="text-xs text-slate-400">
-                        {a.type_label}
-                        {a.is_required ? " · Wajib" : ""}
-                      </p>
+                      {isLocked && (
+                        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                          <Lock size={12} />
+                          Selesaikan modul sebelumnya terlebih dahulu
+                        </p>
+                      )}
                     </div>
 
                     {isOpen ? (
@@ -337,20 +384,21 @@ export default function ClassDetailPage() {
                           konten...
                         </div>
                       )}
-
                       {showDetail && (
                         <div className="space-y-3">
                           {detail?.description && (
-                            <p className="text-sm text-slate-600">
-                              {detail.description}
-                            </p>
+                            <div
+                              className="text-sm text-slate-600 text-justify"
+                              dangerouslySetInnerHTML={{
+                                __html: detail.description,
+                              }}
+                            />
                           )}
-
                           {detail?.content?.file_url && (
                             <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
                               <div className="flex items-center gap-2 text-sm text-slate-700">
                                 <FileText size={16} className="text-teal-600" />
-                                {detail.content.file_name}
+                                {a.title}
                                 {detail.content.file_size && (
                                   <span className="text-xs text-slate-400">
                                     ({formatFileSize(detail.content.file_size)})
@@ -365,24 +413,61 @@ export default function ClassDetailPage() {
                               </button>
                             </div>
                           )}
-
                           {detail?.content?.video_url && (
-                            <video
-                              controls
-                              className="w-full rounded-xl"
-                              src={detail.content.video_url}
+                            <iframe
+                              src={getYoutubeEmbedUrl(detail.content.video_url)}
+                              title={detail.title}
+                              className="w-full rounded-xl aspect-video"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
                             />
                           )}
-
-                          {!detail?.content?.file_url &&
+                          {!isQuiz &&
+                            !detail?.content?.file_url &&
                             !detail?.content?.video_url && (
                               <button
                                 onClick={() => handleOpenContent(a, detail)}
-                                className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-teal-300 hover:text-teal-700"
+                                className="flex justify-end gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-teal-300 hover:text-teal-700"
                               >
                                 <ActionIcon size={13} /> {action}
                               </button>
                             )}
+                          {!a.is_completed && (
+                            <div className="flex w-full justify-center mt-5">
+                              {a.type?.toLowerCase().includes("quiz") ? (
+                                <button
+                                  onClick={() => handleOpenContent(a, detail)}
+                                  className="w-full rounded-lg bg-teal-500 px-3 py-2 text-white hover:bg-teal-600"
+                                >
+                                  <span className="flex items-center justify-center gap-2">
+                                    <Play size={16} />
+                                    Mulai Kuis
+                                  </span>
+                                </button>
+                              ) : (
+                                <button
+                                  disabled={finishMutation.isPending}
+                                  onClick={() => finishModule(a.id)}
+                                  className="w-full rounded-lg bg-teal-500 px-3 py-2 text-white hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {finishMutation.isPending ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                      <Loader2
+                                        className="animate-spin"
+                                        size={16}
+                                      />
+                                      Menyimpan...
+                                    </span>
+                                  ) : (
+                                    <span className="flex items-center justify-center gap-2">
+                                      <CheckCircle size={16} />
+                                      Selesaikan Modul Ini
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -436,37 +521,51 @@ export default function ClassDetailPage() {
 
               <button
                 onClick={handleContinue}
-                className="mt-5 w-full rounded-full bg-orange-600 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-700"
+                className="mt-5 w-full rounded-full bg-slate-600 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
               >
                 {continueLabel}
               </button>
 
               <div className="mt-6 space-y-2 border-t border-slate-100 pt-4">
-                {activities.map((a) => (
-                  <button
-                    key={a.id}
-                    onClick={() => {
-                      setOpenActivityId(a.id);
-                      document
-                        .getElementById(`activity-${a.id}`)
-                        ?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "center",
-                        });
-                    }}
-                    className="flex w-full items-center justify-between gap-2 text-left text-xs text-slate-500 hover:text-slate-700"
-                  >
-                    <span className="truncate">{a.title}</span>
-                    {a.is_completed ? (
-                      <CheckCircle2
-                        size={14}
-                        className="shrink-0 text-teal-600"
-                      />
-                    ) : (
-                      <Circle size={14} className="shrink-0 text-slate-300" />
-                    )}
-                  </button>
-                ))}
+                {activities.map((a, index) => {
+                  const prevActivity = activities[index - 1];
+                  const isLocked = index > 0 && !prevActivity?.is_completed;
+
+                  return (
+                    <button
+                      key={a.id}
+                      disabled={isLocked}
+                      onClick={() => {
+                        if (!isLocked) {
+                          setOpenActivityId(a.id);
+                          document
+                            .getElementById(`activity-${a.id}`)
+                            ?.scrollIntoView({
+                              behavior: "smooth",
+                              block: "center",
+                            });
+                        }
+                      }}
+                      className={`flex w-full items-center justify-between gap-2 text-left text-xs transition ${
+                        isLocked
+                          ? "cursor-not-allowed text-slate-300"
+                          : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      <span className="truncate">{a.title}</span>
+                      {isLocked ? (
+                        <Lock size={14} className="shrink-0 text-slate-300" />
+                      ) : a.is_completed ? (
+                        <CheckCircle2
+                          size={14}
+                          className="shrink-0 text-teal-600"
+                        />
+                      ) : (
+                        <Circle size={14} className="shrink-0 text-slate-300" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -475,18 +574,18 @@ export default function ClassDetailPage() {
         {/* Ujian Akhir & Sertifikat */}
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-slate-800">
-            Ujian Akhir &amp; Sertifikat
+            {/* Ujian Akhir &amp; Sertifikat */}
+            Sertifikat
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Selesaikan semua aktivitas untuk membuka ujian akhir, lalu lulus
-            ujian untuk mendapatkan sertifikat.
+            Lengkapi semua aktivitas untuk mendapatkan sertifikat
           </p>
 
           <div className="relative mt-6">
             <div className="absolute bottom-5 left-5 top-5 w-px bg-slate-200" />
             <div className="space-y-6">
               {/* Ujian Akhir */}
-              <div
+              {/* <div
                 id="stage-exam"
                 className={`flex items-start gap-4 rounded-xl p-2 transition ${
                   highlightId === "exam" ? "bg-teal-50" : ""
@@ -536,7 +635,7 @@ export default function ClassDetailPage() {
                 >
                   {finalExam.completed ? "Lihat Hasil" : "Mulai Ujian"}
                 </button>
-              </div>
+              </div> */}
 
               {/* Sertifikat */}
               <div
@@ -561,7 +660,7 @@ export default function ClassDetailPage() {
                   <p className="mt-0.5 text-xs text-slate-400">
                     {certUnlocked
                       ? "Sertifikat siap diunduh"
-                      : "Lulus ujian akhir untuk membuka sertifikat"}
+                      : "Lengkapi semua aktivitas untuk mendapatkan sertifikat"}
                   </p>
                 </div>
                 <button
@@ -579,6 +678,21 @@ export default function ClassDetailPage() {
           </div>
         </div>
       </div>
+      <ActivityTextModal
+        open={!!selectedText}
+        title={selectedText?.title}
+        description={selectedText?.description}
+        content={selectedText?.content?.content}
+        onClose={() => setSelectedText(null)}
+      />
+      <QuizModal
+        open={!!selectedQuiz}
+        title={selectedQuiz?.title}
+        onClose={() => setSelectedQuiz(null)}
+        activityId={selectedQuiz?.id}
+        courseId={course?.id}
+        token={session?.accessToken}
+      />
     </div>
   );
 }

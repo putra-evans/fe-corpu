@@ -60,6 +60,7 @@ export interface Kelas {
   registered_at: string;
   status_label: string;
   progress?: number;
+  timeline_status: string;
 }
 
 export interface Meta {

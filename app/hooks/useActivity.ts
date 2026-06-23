@@ -25,14 +25,10 @@ const fetchActivity = async (params: Params): Promise<ActivityResponse> => {
   }
 
   const data: ActivityResponse = await res.json();
-
   return data;
 };
 
 export const useActivity = (params: Params) => {
-  console.log("ID course: ", params.course_id);
-  console.log("Token: ", params.token);
-
   return useQuery<ActivityResponse>({
     queryKey: ["kelas-saya", params.course_id],
     queryFn: () => fetchActivity(params),

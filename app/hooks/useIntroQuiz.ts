@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { keepPreviousData } from "@tanstack/react-query";
-import { DetailActivityResponse } from "@/types/activity";
+import { IntroQuizResponse } from "@/types/quiz";
 
 type Params = {
   course_id: string;
@@ -9,11 +9,9 @@ type Params = {
   token?: string;
 };
 
-const fetchDetailActivity = async (
-  params: Params,
-): Promise<DetailActivityResponse> => {
+const fetchIntroQuiz = async (params: Params): Promise<IntroQuizResponse> => {
   const res = await fetch(
-    `/api/proxy/course/${params.course_id}/activity/${params.activity_id}`,
+    `/api/proxy/course/${params.course_id}/activity/${params.activity_id}/quiz`,
     {
       headers: {
         Authorization: `Bearer ${params.token}`,
@@ -30,16 +28,15 @@ const fetchDetailActivity = async (
     throw new Error("Gagal ambil kelas");
   }
 
-  const data: DetailActivityResponse = await res.json();
-
+  const data: IntroQuizResponse = await res.json();
   return data;
 };
 
-export const useDetailActivity = (params: Params) => {
-  return useQuery<DetailActivityResponse>({
-    queryKey: ["kelas-saya", params.course_id, params.activity_id],
-    queryFn: () => fetchDetailActivity(params),
-    enabled: !!params.course_id && !!params.activity_id && !!params.token,
+export const useIntroQuiz = (params: Params) => {
+  return useQuery<IntroQuizResponse>({
+    queryKey: ["intro-quiz", params.activity_id],
+    queryFn: () => fetchIntroQuiz(params),
+    enabled: !!params.activity_id && !!params.token,
     staleTime: 1000 * 60 * 5,
     placeholderData: keepPreviousData,
   });
