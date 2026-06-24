@@ -31,66 +31,25 @@ export const options: NextAuthOptions = {
         const data = await res.json();
 
         console.log("DATA LOGIN", data);
-
-        // Cek apakah response dari fetch sukses
-        if (!res.ok) {
-          console.log("status false dari backend", data.message);
-          throw new Error("Gagal terhubung ke server otentikasi");
-        }
-
-        // Validasi struktur response
-        if (data.status === true && data.data.token != "") {
-          const user = data.data.user;
-          console.log("DATA RESPONSE LOGIN", user);
-
-          // Validasi properti penting user (jaga-jaga kalau data API tidak konsisten)
-          if (!user.nip || !credentials.username || !user.name) {
-            throw new Error("Data user tidak lengkap");
-          }
-
-          // Return user object yang akan diproses oleh NextAuth (masuk ke JWT/callback)
-          return {
-            id: credentials.username,
-            accessToken: data.data.token,
-            username: credentials.username,
-            nama_asn: user.name,
-          };
-        }
-
-        // Jika gagal login
-        throw new Error("Username atau password salah");
-        // if (pass === "Putra@21") {
-        //   const res = await fetch(
-        //     `${process.env.SIMPEG_DETAIL_PEGAWAI}/${credentials.username}`
-        //   );
-
-        //   if (!res.ok) {
-        //     throw new Error("Gagal menghubungi server SIMPEG");
-        //   }
-
-        //   const data = await res.json();
-
-        //   // Validasi respon
-        //   if (data.response === "RC200" && data.result) {
-        //     const user = data.result;
-        //     console.log(user);
-
-        //     // Validasi data user minimal
-        //     if (!user.pns_id || !user.nip || !user.nama_pns) {
-        //       throw new Error("Data pegawai tidak lengkap");
-        //     }
-
-        //     return {
-        //       accessToken: null,
-        //       username: user.nip,
-        //       nama_asn: user.nama_pns,
-        //     };
-        //   } else {
-        //     throw new Error("Pegawai Tidak Ditemukan");
-        //   }
-        // } else {
-
+        // if (!res.ok) {
+        //   console.log("status false dari backend", data.message);
+        //   throw new Error("Gagal terhubung ke server otentikasi");
         // }
+        // if (data.status === true && data.data.token != "") {
+        //   const user = data.data.user;
+        //   console.log("DATA RESPONSE LOGIN", user);
+
+        //   if (!user.nip || !credentials.username || !user.name) {
+        //     throw new Error("Data user tidak lengkap");
+        //   }
+        //   return {
+        //     id: credentials.username,
+        //     accessToken: data.data.token,
+        //     username: credentials.username,
+        //     nama_asn: user.name,
+        //   };
+        // }
+        throw new Error("Username atau password salah");
       },
     }),
   ],
