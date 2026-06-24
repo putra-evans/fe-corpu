@@ -168,9 +168,9 @@ const Header: React.FC = () => {
                         <p className="font-semibold text-gray-800 leading-tight">
                           {session.user.username}
                         </p>
-                        <p className="font-semibold text-gray-800 leading-tight">
+                        {/* <p className="font-semibold text-gray-800 leading-tight">
                           {session.accessToken}
-                        </p>
+                        </p> */}
                       </div>
                     </div>
 

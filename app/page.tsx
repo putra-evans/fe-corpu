@@ -40,9 +40,9 @@ const Home = () => {
       <Hero />
       <Features />
       <Tentang />
-      <Expert />
+      {/* <Expert /> */}
       {/* <Gallery /> */}
-      <Contact />
+      {/* <Contact /> */}
       {/* <Newsletter /> */}
     </FrontLayout>
   );

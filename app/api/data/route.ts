@@ -13,7 +13,7 @@ const HeaderData: HeaderItem[] = [
   { label: "Kelas", href: "/kelas" },
   { label: "Coaching ", href: "/coaching " },
   { label: "Mentoring ", href: "/mentoring " },
-  { label: "Docs", href: "/documentation" },
+  // { label: "Docs", href: "/documentation" },
 ];
 
 const FeaturesData: FeaturesType[] = [

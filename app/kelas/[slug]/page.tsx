@@ -83,7 +83,10 @@ export default function CourseDetail() {
 
             <div className="mb-6">
               <h2 className="text-lg font-semibold mb-1">Informasi Umum</h2>
-              <p className="text-gray-700 text-sm">{course.description}</p>
+              <p
+                className="text-gray-700 text-sm text-justify"
+                dangerouslySetInnerHTML={{ __html: course.description }}
+              />
             </div>
 
             <div className="mb-6">

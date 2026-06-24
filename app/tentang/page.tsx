@@ -61,7 +61,7 @@ const Tentang = () => {
               <p className="text-primary text-lg font-normal mb-3 tracking-widest uppercase lg:text-start text-center">
                 Tentang Corporate University
               </p>
-              <p className="text-black/50 text-lg font-normal my-5 text-start">
+              <div className="text-black/50 text-lg font-normal my-5 text-start">
                 Penyelenggaraan
                 <span className="font-bold italic">
                   Corporate University
@@ -97,7 +97,7 @@ const Tentang = () => {
                     <span> Integrasi Sistem</span>
                   </li>
                 </ul>
-              </p>
+              </div>
               <p className="text-black/50 text-lg font-normal mb-10 text-start">
                 Teknologi Pembelajaran dalam unsur Corpu tersebut adalah media
                 pembelajaran dengan mengoptimalkan pemanfaatan teknologi

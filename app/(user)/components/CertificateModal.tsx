@@ -155,15 +155,7 @@ export default function CertificateModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-7 py-4 border-t border-slate-100 gap-3 mt-3">
-          <p className="text-xs text-slate-400 shrink-0">
-            {/* Tekan{" "}
-            <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
-              Esc
-            </kbd>{" "}
-            untuk menutup */}
-          </p>
-
+        <div className="flex items-center justify-end px-7 py-4 border-t border-slate-100 gap-3 mt-3">
           {cert?.file_url && (
             <div className="flex items-center gap-2">
               <a

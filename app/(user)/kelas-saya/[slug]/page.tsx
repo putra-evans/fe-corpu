@@ -26,6 +26,7 @@ import {
   FilesIcon,
   RectangleEllipsis,
   CheckCircle,
+  History,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useKelasBySlug } from "@/app/hooks/useKelasBySlug";
@@ -40,6 +41,7 @@ import { useFinishActivity } from "@/app/hooks/useFinishActivity";
 import ActivityTextModal from "../../components/ActivityTextModal";
 import QuizModal from "../../components/QuizModal";
 import CertificateModal from "../../components/CertificateModal";
+import QuizHistoryModal from "../../components/Quizhistorymodal";
 
 type ActivityListItem = {
   id: string;
@@ -109,6 +111,7 @@ export default function ClassDetailPage() {
   );
   const [selectedCertificate, setSelectedCertificate] =
     useState<boolean>(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const [openActivityId, setOpenActivityId] = useState<string>();
   const [highlightId, setHighlightId] = useState<string | null>(null);
@@ -166,6 +169,10 @@ export default function ClassDetailPage() {
 
   const certUnlocked = activity?.course?.progress === 100;
 
+  const quizActivities = activities.filter((item) =>
+    item.type?.toLowerCase().includes("quiz"),
+  );
+
   const continueLabel =
     done < total
       ? "Lanjutkan Belajar"
@@ -188,18 +195,6 @@ export default function ClassDetailPage() {
       setTimeout(() => setHighlightId(null), 1400);
       return;
     }
-    // const target =
-    //   !finalExam.completed || (finalExam.score ?? 0) < 70
-    //     ? "stage-exam"
-    //     : "stage-cert";
-    // setHighlightId(target === "stage-exam" ? "exam" : "cert");
-    // setTimeout(
-    //   () =>
-    //     document
-    //       .getElementById(target)
-    //       ?.scrollIntoView({ behavior: "smooth", block: "center" }),
-    //   50,
-    // );
     setTimeout(() => setHighlightId(null), 1400);
   };
 
@@ -221,6 +216,10 @@ export default function ClassDetailPage() {
 
   const handleDownloadCertificate = () => {
     setSelectedCertificate(true);
+  };
+
+  const handleHistoryQuiz = () => {
+    setShowHistory(true);
   };
 
   const r = 42;
@@ -587,67 +586,52 @@ export default function ClassDetailPage() {
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-slate-800">
             {/* Ujian Akhir &amp; Sertifikat */}
-            Sertifikat
+            Informasi Tambahan
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Lengkapi semua aktivitas untuk mendapatkan sertifikat
+            Lengkapi semua aktivitas untuk membuka informasi tambahan
           </p>
 
           <div className="relative mt-6">
             <div className="absolute bottom-5 left-5 top-5 w-px bg-slate-200" />
             <div className="space-y-6">
-              {/* Ujian Akhir */}
-              {/* <div
-                id="stage-exam"
-                className={`flex items-start gap-4 rounded-xl p-2 transition ${
-                  highlightId === "exam" ? "bg-teal-50" : ""
-                }`}
-              >
+              {quizActivities && quizActivities?.length > 0 && (
                 <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                    !examUnlocked
-                      ? "bg-slate-100 text-slate-400"
-                      : finalExam.completed
-                        ? "bg-teal-600 text-white"
-                        : "bg-teal-50 text-teal-600"
+                  id="stage-cert"
+                  className={`flex items-start gap-4 rounded-xl p-2 transition ${
+                    highlightId === "cert" ? "bg-teal-50" : ""
                   }`}
                 >
-                  {!examUnlocked ? (
-                    <Lock size={17} />
-                  ) : finalExam.completed ? (
-                    <CheckCircle2 size={18} />
-                  ) : (
-                    <GraduationCap size={18} />
-                  )}
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                      !certUnlocked
+                        ? "bg-slate-100 text-slate-400"
+                        : "bg-orange-100 text-orange-600"
+                    }`}
+                  >
+                    {certUnlocked ? <History size={18} /> : <Lock size={17} />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-slate-800">Riwayat Kuis</p>
+                    <p className="mt-0.5 text-xs text-slate-400">
+                      {certUnlocked
+                        ? "Riwayat kuis yang telah dikerjakan"
+                        : "Lengkapi semua aktivitas untuk melihat riwayat kuis"}
+                    </p>
+                  </div>
+                  <button
+                    disabled={!certUnlocked}
+                    onClick={handleHistoryQuiz}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5  font-semibold transition w-40 text-center ${
+                      certUnlocked
+                        ? "bg-teal-500 text-white hover:bg-teal-600"
+                        : "cursor-not-allowed border border-slate-200 text-slate-300"
+                    }`}
+                  >
+                    <Eye size={13} /> Riwayat Quiz
+                  </button>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-slate-800">
-                    Ujian Akhir: {course?.title}
-                  </p>
-                  <p className="mt-0.5 text-xs text-slate-400">
-                    {!examUnlocked
-                      ? "Selesaikan semua aktivitas terlebih dahulu"
-                      : finalExam.completed
-                        ? `Skor ${finalExam.score}/100 · ${
-                            (finalExam.score ?? 0) >= 70
-                              ? "Lulus"
-                              : "Belum lulus, silakan ulangi"
-                          }`
-                        : "30 soal · 60 menit"}
-                  </p>
-                </div>
-                <button
-                  onClick={() => examUnlocked && toggleExam()}
-                  disabled={!examUnlocked}
-                  className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                    !examUnlocked
-                      ? "cursor-not-allowed border-slate-200 text-slate-300"
-                      : "border-slate-200 text-slate-600 hover:border-teal-300 hover:text-teal-700"
-                  }`}
-                >
-                  {finalExam.completed ? "Lihat Hasil" : "Mulai Ujian"}
-                </button>
-              </div> */}
+              )}
 
               {/* Sertifikat */}
               <div
@@ -678,7 +662,7 @@ export default function ClassDetailPage() {
                 <button
                   disabled={!certUnlocked}
                   onClick={handleDownloadCertificate}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5  font-semibold transition ${
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5  font-semibold transition w-40 text-center ${
                     certUnlocked
                       ? "bg-orange-600 text-white hover:bg-orange-700"
                       : "cursor-not-allowed border border-slate-200 text-slate-300"
@@ -710,6 +694,13 @@ export default function ClassDetailPage() {
         open={!!selectedCertificate}
         onClose={() => setSelectedCertificate(false)}
         courseId={course?.id || ""}
+        token={session?.accessToken || ""}
+      />
+      <QuizHistoryModal
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        courseId={course?.id || ""}
+        activityId={quizActivities[0]?.id || ""}
         token={session?.accessToken || ""}
       />
     </div>
