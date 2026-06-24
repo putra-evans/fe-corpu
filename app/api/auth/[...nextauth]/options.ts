@@ -49,7 +49,7 @@ export const options: NextAuthOptions = {
         //     nama_asn: user.name,
         //   };
         // }
-        throw new Error("Username atau password salah");
+        throw new Error(data);
       },
     }),
   ],
