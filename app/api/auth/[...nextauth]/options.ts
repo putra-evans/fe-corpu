@@ -28,9 +28,20 @@ export const options: NextAuthOptions = {
             password: credentials.password,
           }),
         });
+
+        console.log("STATUS LOGIN:", res.status);
+        console.log("STATUS TEXT:", res.statusText);
+
         const data = await res.json();
 
-        console.log("DATA LOGIN", data);
+        console.log("DATA LOGIN:", data);
+
+        if (!res.ok) {
+          throw new Error(data.message || "Login gagal");
+        }
+        // const data = await res.json();
+
+        // console.log("DATA LOGIN", data);
 
         // Cek apakah response dari fetch sukses
         // if (!res.ok) {
