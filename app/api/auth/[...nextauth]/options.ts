@@ -28,13 +28,15 @@ export const options: NextAuthOptions = {
             password: credentials.password,
           }),
         });
+        const data = await res.json();
+
+        console.log("DATA LOGIN", data);
 
         // Cek apakah response dari fetch sukses
         if (!res.ok) {
+          console.log("status false dari backend", data.message);
           throw new Error("Gagal terhubung ke server otentikasi");
         }
-
-        const data = await res.json();
 
         // Validasi struktur response
         if (data.status === true && data.data.token != "") {
