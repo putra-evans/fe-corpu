@@ -10,19 +10,15 @@ export const options: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log(process.env.NEXTAUTH_URL);
-        console.log(process.env.NEXT_PUBLIC_API_URL);
-        console.log(credentials);
-
         if (!credentials) {
           throw new Error("Missing credentials");
         }
         let pass = credentials.password;
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const apiUrl = process.env.API_BASE_URL;
         if (!apiUrl) {
-          throw new Error("NEXT_PUBLIC_API_URL is not defined");
+          throw new Error("API_BASE_URL is not defined");
         }
-        const res = await fetch(`${apiUrl}/api/login`, {
+        const res = await fetch(`${apiUrl}/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -35,10 +31,14 @@ export const options: NextAuthOptions = {
         const data = await res.json();
 
         console.log("DATA LOGIN", data);
+
+        // Cek apakah response dari fetch sukses
         // if (!res.ok) {
         //   console.log("status false dari backend", data.message);
         //   throw new Error("Gagal terhubung ke server otentikasi");
         // }
+
+        // // Validasi struktur response
         // if (data.status === true && data.data.token != "") {
         //   const user = data.data.user;
         //   console.log("DATA RESPONSE LOGIN", user);
@@ -53,7 +53,8 @@ export const options: NextAuthOptions = {
         //     nama_asn: user.name,
         //   };
         // }
-        throw new Error(data);
+        // throw new Error("Username atau password salah");
+        throw new Error(data.message);
       },
     }),
   ],
