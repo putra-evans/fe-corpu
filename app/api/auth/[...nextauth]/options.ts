@@ -10,6 +10,10 @@ export const options: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        console.log(process.env.NEXTAUTH_URL);
+        console.log(process.env.NEXT_PUBLIC_API_URL);
+        console.log(credentials);
+
         if (!credentials) {
           throw new Error("Missing credentials");
         }
