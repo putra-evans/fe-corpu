@@ -39,9 +39,6 @@ export const options: NextAuthOptions = {
         if (!res.ok) {
           throw new Error(data.message || "Login gagal");
         }
-        // const data = await res.json();
-
-        // console.log("DATA LOGIN", data);
 
         // Cek apakah response dari fetch sukses
         if (!res.ok) {
@@ -57,12 +54,16 @@ export const options: NextAuthOptions = {
           if (!user.nip || !credentials.username || !user.name) {
             throw new Error("Data user tidak lengkap");
           }
-          return {
+          const authUser = {
             id: credentials.username,
             accessToken: data.data.token,
             username: credentials.username,
             nama_asn: user.name,
           };
+
+          console.log("RETURN USER", authUser);
+
+          return authUser;
         }
         throw new Error("Username atau password salah");
       },
@@ -90,6 +91,10 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
+      console.log("JWT CALLBACK");
+      console.log("TOKEN", token);
+      console.log("USER", user);
+
       if (user) {
         token.username = user.username;
         token.nama_asn = user.nama_asn;
