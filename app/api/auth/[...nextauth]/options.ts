@@ -44,28 +44,27 @@ export const options: NextAuthOptions = {
         // console.log("DATA LOGIN", data);
 
         // Cek apakah response dari fetch sukses
-        // if (!res.ok) {
-        //   console.log("status false dari backend", data.message);
-        //   throw new Error("Gagal terhubung ke server otentikasi");
-        // }
+        if (!res.ok) {
+          console.log("status false dari backend", data.message);
+          throw new Error("Gagal terhubung ke server otentikasi");
+        }
 
-        // // Validasi struktur response
-        // if (data.status === true && data.data.token != "") {
-        //   const user = data.data.user;
-        //   console.log("DATA RESPONSE LOGIN", user);
+        // Validasi struktur response
+        if (data.status === true && data.data.token != "") {
+          const user = data.data.user;
+          console.log("DATA RESPONSE LOGIN", user);
 
-        //   if (!user.nip || !credentials.username || !user.name) {
-        //     throw new Error("Data user tidak lengkap");
-        //   }
-        //   return {
-        //     id: credentials.username,
-        //     accessToken: data.data.token,
-        //     username: credentials.username,
-        //     nama_asn: user.name,
-        //   };
-        // }
-        // throw new Error("Username atau password salah");
-        throw new Error(data.data);
+          if (!user.nip || !credentials.username || !user.name) {
+            throw new Error("Data user tidak lengkap");
+          }
+          return {
+            id: credentials.username,
+            accessToken: data.data.token,
+            username: credentials.username,
+            nama_asn: user.name,
+          };
+        }
+        throw new Error("Username atau password salah");
       },
     }),
   ],
