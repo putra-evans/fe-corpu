@@ -54,7 +54,7 @@ export const options: NextAuthOptions = {
         //   };
         // }
         // throw new Error("Username atau password salah");
-        throw new Error(data.message);
+        throw new Error(data.data);
       },
     }),
   ],
