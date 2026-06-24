@@ -73,18 +73,7 @@ export const options: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 60 * 60,
   },
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        // Tidak menyetel expires berarti cookie session hilang saat browser ditutup
-      },
-    },
-  },
+
   pages: {
     signIn: "/",
   },
