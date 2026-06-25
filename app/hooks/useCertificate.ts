@@ -6,6 +6,7 @@ export interface CertificateData {
   issued_date: string;
   verification_code: string;
   file_url: string;
+  file_pdf: string;
 }
 
 interface CertificateResponse {

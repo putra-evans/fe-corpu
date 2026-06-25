@@ -44,6 +44,8 @@ export default function CertificateModal({
       })
     : "-";
 
+  console.log("cert", cert);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -158,7 +160,7 @@ export default function CertificateModal({
         <div className="flex items-center justify-end px-7 py-4 border-t border-slate-100 gap-3 mt-3">
           {cert?.file_url && (
             <div className="flex items-center gap-2">
-              <a
+              {/* <a
                 href={cert.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -166,14 +168,25 @@ export default function CertificateModal({
               >
                 <ExternalLink size={14} />
                 Buka
-              </a>
+              </a> */}
               <a
                 href={cert.file_url}
                 download
+                target="_blank"
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2 text-sm font-bold text-white shadow-md shadow-amber-200 transition hover:from-amber-600 hover:to-orange-600"
               >
                 <Download size={14} />
-                Unduh
+                Unduh JPEG
+              </a>
+              <a
+                href={cert.file_pdf}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-green-500 to-blue-500 px-5 py-2 text-sm font-bold text-white shadow-md shadow-blue-200 transition hover:from-green-600 hover:to-blue-600"
+              >
+                <Download size={14} />
+                Unduh PDF
               </a>
             </div>
           )}
