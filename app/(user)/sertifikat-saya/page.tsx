@@ -13,33 +13,70 @@ import {
   FileX,
   CalendarDays,
   Star,
+  ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-// Ganti dengan cara ambil token di project kamu
-
 export default function SertifikatPage() {
   const { data: session } = useSession();
   const token = session?.accessToken || "";
-  console.log(token, "token");
-
-  const { data, isLoading, isError } = useCertificateList(token);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState<CertificateItem | null>(null);
 
-  const certificates = data?.data ?? [];
+  const { data, isLoading, isError, isFetching } = useCertificateList(
+    token,
+    page,
+  );
 
+  const pagination = data?.data;
+  const certificates = pagination?.data ?? [];
+
+  // Client-side search filter (hanya pada page aktif)
   const filtered = certificates.filter(
     (c) =>
       c.course_title.toLowerCase().includes(search.toLowerCase()) ||
       c.certificate_no.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const totalPages = pagination?.last_page ?? 1;
+  const from = pagination?.from ?? 0;
+  const to = pagination?.to ?? 0;
+  const total = pagination?.total ?? 0;
+
+  function handlePageChange(p: number) {
+    if (p < 1 || p > totalPages) return;
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Build page numbers: selalu tampilkan max 5 nomor
+  function getPageNumbers() {
+    if (totalPages <= 5)
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const pages: (number | "...")[] = [];
+    if (page <= 3) {
+      pages.push(1, 2, 3, 4, "...", totalPages);
+    } else if (page >= totalPages - 2) {
+      pages.push(
+        1,
+        "...",
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      );
+    } else {
+      pages.push(1, "...", page - 1, page, page + 1, "...", totalPages);
+    }
+    return pages;
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 rounded-lg">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-100 px-6 py-6 sticky top-0 z-20">
+    <div className="min-h-screen bg-slate-50">
+      {/* ── Header ── */}
+      <div className="bg-white border-b border-slate-100 px-6 py-5 sticky top-0 z-20">
         <div className="max-w-4xl mx-auto flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 mb-0.5">
@@ -49,13 +86,10 @@ export default function SertifikatPage() {
               </h1>
             </div>
             <p className="text-[13px] text-slate-400">
-              {isLoading
-                ? "Memuat..."
-                : `${certificates.length} sertifikat diterbitkan`}
+              {isLoading ? "Memuat..." : `${total} sertifikat diterbitkan`}
             </p>
           </div>
 
-          {/* Search */}
           <div className="relative w-full sm:w-72">
             <Search
               size={14}
@@ -63,16 +97,19 @@ export default function SertifikatPage() {
             />
             <input
               type="text"
-              placeholder="Cari pelatihan atau nomor sertifikat..."
+              placeholder="Cari judul atau nomor sertifikat..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               className="w-full pl-9 pr-4 py-2 text-[13px] rounded-xl border border-slate-200 bg-slate-50 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-transparent transition"
             />
           </div>
         </div>
       </div>
 
-      {/* Content */}
+      {/* ── Content ── */}
       <div className="max-w-4xl mx-auto px-6 py-6">
         {/* Loading skeleton */}
         {isLoading && (
@@ -86,7 +123,7 @@ export default function SertifikatPage() {
                 <div className="p-4 space-y-2">
                   <div className="h-4 bg-slate-100 rounded w-3/4" />
                   <div className="h-3 bg-slate-100 rounded w-1/2" />
-                  <div className="h-3 bg-slate-100 rounded w-1/3" />
+                  <div className="h-8 bg-slate-100 rounded-xl mt-4" />
                 </div>
               </div>
             ))}
@@ -119,22 +156,88 @@ export default function SertifikatPage() {
           </div>
         )}
 
-        {/* Grid */}
+        {/* Grid — sedikit redup saat fetching halaman berikutnya */}
         {!isLoading && !isError && filtered.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filtered.map((cert, idx) => (
-              <CertificateCard
-                key={cert.certificate_no}
-                cert={cert}
-                index={idx}
-                onPreview={() => setPreview(cert)}
-              />
-            ))}
-          </div>
+          <>
+            <div
+              className={`grid grid-cols-1 sm:grid-cols-2 gap-4 transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}
+            >
+              {filtered.map((cert, idx) => (
+                <CertificateCard
+                  key={cert.id}
+                  cert={cert}
+                  index={idx}
+                  onPreview={() => setPreview(cert)}
+                />
+              ))}
+            </div>
+
+            {/* ── Pagination ── */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex flex-col items-center gap-3">
+                {/* Info range */}
+                <p className="text-[12px] text-slate-400">
+                  Menampilkan{" "}
+                  <span className="font-semibold text-slate-600">
+                    {from}–{to}
+                  </span>{" "}
+                  dari{" "}
+                  <span className="font-semibold text-slate-600">{total}</span>{" "}
+                  sertifikat
+                </p>
+
+                {/* Buttons */}
+                <div className="flex items-center gap-1.5">
+                  {/* Prev */}
+                  <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1 || isFetching}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronLeft size={15} />
+                  </button>
+
+                  {/* Page numbers */}
+                  {getPageNumbers().map((p, i) =>
+                    p === "..." ? (
+                      <span
+                        key={`dots-${i}`}
+                        className="flex h-9 w-9 items-center justify-center text-[13px] text-slate-400"
+                      >
+                        ···
+                      </span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => handlePageChange(p as number)}
+                        disabled={isFetching}
+                        className={`flex h-9 w-9 items-center justify-center rounded-xl text-[13px] font-semibold transition ${
+                          page === p
+                            ? "bg-amber-500 text-white shadow-sm shadow-amber-200"
+                            : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                        } disabled:cursor-not-allowed`}
+                      >
+                        {p}
+                      </button>
+                    ),
+                  )}
+
+                  {/* Next */}
+                  <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === totalPages || isFetching}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronRight size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Preview Modal */}
+      {/* ── Preview Modal ── */}
       {preview && (
         <PreviewModal cert={preview} onClose={() => setPreview(null)} />
       )}
@@ -170,7 +273,6 @@ function CertificateCard({
         : score >= 60
           ? "text-amber-600"
           : "text-red-500";
-
   const scoreBg =
     score === null
       ? "bg-slate-100"
@@ -183,7 +285,11 @@ function CertificateCard({
   return (
     <div
       className="group bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
-      style={{ animationDelay: `${index * 60}ms` }}
+      style={{
+        animation: `fadeInUp 0.3s ease forwards`,
+        animationDelay: `${index * 50}ms`,
+        opacity: 0,
+      }}
     >
       {/* Thumbnail */}
       <div className="relative h-36 overflow-hidden bg-slate-100">
@@ -193,22 +299,21 @@ function CertificateCard({
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
 
         {/* Score badge */}
         {score !== null && (
           <div
-            className={`absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${scoreBg} ${scoreColor}`}
+            className={`absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${scoreBg} ${scoreColor}`}
           >
-            <Star size={10} fill="currentColor" />
+            <Star size={9} fill="currentColor" />
             {score}
           </div>
         )}
 
-        {/* Cert no bottom-left */}
+        {/* Cert no */}
         <div className="absolute bottom-3 left-3">
-          <span className="text-[10px] font-mono text-white/80 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-md">
+          <span className="text-[10px] font-mono text-white/85 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-md">
             {cert.certificate_no}
           </span>
         </div>
@@ -216,16 +321,14 @@ function CertificateCard({
 
       {/* Body */}
       <div className="p-4">
-        <h3 className="text-[14px] font-semibold text-slate-800 leading-snug mb-2 line-clamp-2">
+        <h3 className="text-[14px] font-semibold text-slate-800 leading-snug mb-1.5 line-clamp-2">
           {cert.course_title}
         </h3>
-
         <div className="flex items-center gap-1.5 text-[12px] text-slate-400 mb-4">
           <CalendarDays size={11} />
           {issuedDate}
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
           <button
             onClick={onPreview}
@@ -239,13 +342,26 @@ function CertificateCard({
             target="_blank"
             rel="noopener noreferrer"
             download
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-[12px] font-bold text-white shadow-sm shadow-amber-200 hover:from-amber-600 hover:to-orange-600 transition"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-2 text-[12px] font-bold text-white shadow-sm shadow-amber-100 hover:from-amber-600 hover:to-orange-600 transition"
           >
             <Download size={13} />
             Unduh PDF
           </a>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -279,24 +395,23 @@ function PreviewModal({
           <div className="pointer-events-none absolute -top-8 -right-8 h-32 w-32 rounded-full bg-white/[0.07]" />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white hover:bg-white/25 transition text-lg font-bold"
+            className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white hover:bg-white/25 transition font-bold"
           >
             ✕
           </button>
           <div className="flex items-center gap-2 mb-1">
-            <Award size={16} className="text-white/80" />
+            <Award size={14} className="text-white/80" />
             <span className="text-[11px] font-medium text-white/80">
               Sertifikat Kelulusan
             </span>
           </div>
-          <h2 className="text-base font-bold text-white leading-snug pr-8 line-clamp-2">
+          <h2 className="text-base font-bold text-white leading-snug pr-10 line-clamp-2">
             {cert.course_title}
           </h2>
         </div>
 
-        {/* Scrollable */}
+        {/* Scrollable body */}
         <div className="overflow-y-auto flex-1 px-6 pt-5 pb-2">
-          {/* Certificate image */}
           <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm mb-4">
             <img
               src={cert.certificate_image}
@@ -306,7 +421,6 @@ function PreviewModal({
             />
           </div>
 
-          {/* Info rows */}
           <div className="space-y-2">
             <InfoRow
               label="Nomor Sertifikat"
@@ -360,7 +474,7 @@ function PreviewModal({
 }
 
 /* ------------------------------------------------------------------ */
-/* Shared                                                               */
+/* InfoRow                                                              */
 /* ------------------------------------------------------------------ */
 
 function InfoRow({
@@ -383,12 +497,16 @@ function InfoRow({
       }`}
     >
       <span
-        className={`text-[12px] font-semibold uppercase tracking-wide ${highlight ? "text-amber-600" : "text-slate-400"}`}
+        className={`text-[12px] font-semibold uppercase tracking-wide ${
+          highlight ? "text-amber-600" : "text-slate-400"
+        }`}
       >
         {label}
       </span>
       <span
-        className={`text-sm font-bold text-right max-w-[60%] break-all ${mono ? "font-mono" : ""} ${highlight ? "text-amber-700" : "text-slate-800"}`}
+        className={`text-sm font-bold text-right max-w-[60%] break-all ${
+          mono ? "font-mono" : ""
+        } ${highlight ? "text-amber-700" : "text-slate-800"}`}
       >
         {value}
       </span>

@@ -36,7 +36,7 @@ import ImageViewer from "@/components/molecules/ImageViewer";
 import { useSession } from "next-auth/react";
 import { useActivity } from "@/app/hooks/useActivity";
 import { useDetailActivity } from "@/app/hooks/useDetailActivity";
-import getYoutubeEmbedUrl from "@/lib/youtube";
+import { getGoogleDriveEmbedUrl, getYoutubeEmbedUrl } from "@/lib/youtube";
 import { useFinishActivity } from "@/app/hooks/useFinishActivity";
 import ActivityTextModal from "../../components/ActivityTextModal";
 import QuizModal from "../../components/QuizModal";
@@ -115,13 +115,6 @@ export default function ClassDetailPage() {
 
   const [openActivityId, setOpenActivityId] = useState<string>();
   const [highlightId, setHighlightId] = useState<string | null>(null);
-  // const [finalExam, setFinalExam] = useState<{
-  //   completed: boolean;
-  //   score: number | null;
-  // }>({
-  //   completed: false,
-  //   score: null,
-  // });
 
   const { data: activity } = useActivity({
     course_id: course?.id || "",
@@ -316,6 +309,7 @@ export default function ClassDetailPage() {
               const showDetail =
                 isOpen && !isDetailLoading && detail && detail.id === a.id;
               const isQuiz = a.type?.toLowerCase().includes("quiz");
+              console.log("detail", detail?.content?.video_url);
 
               return (
                 <div
@@ -424,15 +418,31 @@ export default function ClassDetailPage() {
                               </button>
                             </div>
                           )}
-                          {detail?.content?.video_url && (
-                            <iframe
-                              src={getYoutubeEmbedUrl(detail.content.video_url)}
-                              title={detail.title}
-                              className="w-full rounded-xl aspect-video"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          )}
+                          {detail?.content?.video_url &&
+                            detail?.content?.video_type === "youtube" && (
+                              <iframe
+                                src={getYoutubeEmbedUrl(
+                                  detail.content.video_url,
+                                )}
+                                title={detail.title}
+                                className="w-full rounded-xl aspect-video"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            )}
+
+                          {detail?.content?.video_url &&
+                            detail?.content?.video_type === "gdrive" && (
+                              <iframe
+                                src={getGoogleDriveEmbedUrl(
+                                  detail.content.video_url,
+                                )}
+                                title={detail.title}
+                                className="w-full aspect-video rounded-xl"
+                                allow="autoplay"
+                                allowFullScreen
+                              />
+                            )}
                           {!isQuiz &&
                             !detail?.content?.file_url &&
                             !detail?.content?.video_url && (
