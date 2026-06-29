@@ -23,7 +23,7 @@ export default function ToastProvider({ children }: ToastProviderProps) {
         pauseOnHover
         theme="light"
         style={{
-          zIndex: 9999,
+          zIndex: 99999999999999999999999,
         }}
       />
     </>

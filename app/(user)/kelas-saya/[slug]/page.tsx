@@ -42,6 +42,7 @@ import ActivityTextModal from "../../components/ActivityTextModal";
 import QuizModal from "../../components/QuizModal";
 import CertificateModal from "../../components/CertificateModal";
 import QuizHistoryModal from "../../components/Quizhistorymodal";
+import { toast } from "react-toastify";
 
 type ActivityListItem = {
   id: string;
@@ -226,7 +227,8 @@ export default function ClassDetailPage() {
         activityId: id,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
+          toast.success(data.message);
           // cari activity berikutnya
           const currentIndex = activities.findIndex((item) => item.id === id);
 
@@ -244,6 +246,10 @@ export default function ClassDetailPage() {
                 });
             }, 300);
           }
+        },
+        onError: (err: any) => {
+          console.log(err);
+          toast.error(err.message);
         },
       },
     );

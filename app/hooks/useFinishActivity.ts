@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export const useFinishActivity = () => {
   const queryClient = useQueryClient();
@@ -27,7 +28,8 @@ export const useFinishActivity = () => {
       console.log("res", res);
 
       if (!res.ok) {
-        throw new Error("Gagal menyelesaikan modul");
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Gagal menyelesaikan modul");
       }
 
       return res.json();

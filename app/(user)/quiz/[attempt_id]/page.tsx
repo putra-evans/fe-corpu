@@ -9,11 +9,16 @@ import {
   ChevronRight,
   CheckCircle2,
   AlertTriangle,
+  XCircle,
+  RefreshCcw,
+  BookOpen,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useFinishQuiz } from "@/app/hooks/useFinishQuiz";
 import { toast } from "react-toastify";
 import GlobalLoading from "@/app/loading";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface QuizOption {
   id: string;
@@ -40,24 +45,190 @@ interface QuizSession {
   questions: QuizQuestion[];
 }
 
+interface QuizResult {
+  attempt_id: string;
+  correct_answers: number;
+  is_passed: boolean;
+  passing_grade: number;
+  score: number;
+  slug: string;
+  total_questions: number;
+}
+
+// ─── Failed Modal ─────────────────────────────────────────────────────────────
+
+function QuizFailedModal({
+  result,
+  onRetry,
+  onBackToMaterial,
+}: {
+  result: QuizResult;
+  onRetry: () => void;
+  onBackToMaterial: () => void;
+}) {
+  const { score, passing_grade, correct_answers, total_questions } = result;
+  const wrong_answers = total_questions - correct_answers;
+  const gap = passing_grade - score;
+  const circumference = 2 * Math.PI * 48;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+      <div className="relative z-10 w-full max-w-md rounded-2xl bg-white shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-red-500 to-rose-600 px-6 py-5 flex items-center gap-3">
+          <div className="rounded-full bg-white/20 p-2">
+            <XCircle className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-widest text-red-100">
+              Hasil Kuis
+            </p>
+            <h2 className="text-lg font-bold text-white leading-tight">
+              Belum Lulus
+            </h2>
+          </div>
+        </div>
+
+        <div className="px-6 pt-6 pb-5 flex flex-col items-center">
+          {/* Score ring */}
+          <div className="relative flex items-center justify-center w-28 h-28 mb-3">
+            <svg
+              className="absolute inset-0 w-full h-full -rotate-90"
+              viewBox="0 0 112 112"
+            >
+              <circle
+                cx="56"
+                cy="56"
+                r="48"
+                fill="none"
+                stroke="#fee2e2"
+                strokeWidth="10"
+              />
+              <circle
+                cx="56"
+                cy="56"
+                r="48"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="10"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={circumference * (1 - score / 100)}
+                className="transition-all duration-700"
+              />
+            </svg>
+            <div className="text-center">
+              <span className="text-3xl font-extrabold text-red-500">
+                {score}
+              </span>
+              <span className="block text-xs text-gray-400 font-medium">
+                Nilai
+              </span>
+            </div>
+          </div>
+
+          {/* Gap notice */}
+          <div className="flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 mb-5">
+            <AlertTriangle className="h-3.5 w-3.5 text-red-500 shrink-0" />
+            <p className="text-xs text-red-600 font-medium">
+              Kurang <span className="font-bold">{gap} poin</span> dari nilai
+              kelulusan ({passing_grade})
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="w-full grid grid-cols-3 gap-3 mb-5">
+            {[
+              {
+                label: "Benar",
+                value: correct_answers,
+                color: "text-emerald-600",
+                bg: "bg-emerald-50",
+              },
+              {
+                label: "Salah",
+                value: wrong_answers,
+                color: "text-red-500",
+                bg: "bg-red-50",
+              },
+              {
+                label: "Total Soal",
+                value: total_questions,
+                color: "text-gray-700",
+                bg: "bg-gray-50",
+              },
+            ].map(({ label, value, color, bg }) => (
+              <div
+                key={label}
+                className={`${bg} rounded-xl py-3 px-2 flex flex-col items-center gap-0.5`}
+              >
+                <span className={`text-xl font-bold ${color}`}>{value}</span>
+                <span className="text-[11px] text-gray-500 font-medium">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-sm text-gray-500 text-center mb-5 leading-relaxed">
+            Pelajari kembali materi dan coba lagi untuk mencapai nilai
+            kelulusan.
+          </p>
+
+          {/* Actions */}
+          <div className="w-full flex flex-col gap-2">
+            <button
+              onClick={onRetry}
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold py-3 transition-colors"
+            >
+              <RefreshCcw className="h-4 w-4" />
+              Coba Lagi
+            </button>
+            <button
+              onClick={onBackToMaterial}
+              className="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-3 transition-colors"
+            >
+              <BookOpen className="h-4 w-4" />
+              Kembali ke Materi
+            </button>
+          </div>
+        </div>
+
+        {/* Attempt ID footer */}
+        <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+          <p className="text-[11px] text-gray-400 text-center font-mono truncate">
+            ID Percobaan: {result.attempt_id}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Quiz Page ────────────────────────────────────────────────────────────────
+
 export default function QuizPage() {
   const router = useRouter();
   const params = useParams();
-
   const attemptId = params.attempt_id as string;
 
   const [session, setSession] = useState<QuizSession | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({}); // { question_id: option_id }
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // ── NEW: result state for failed modal ──
+  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+  const [showFailedModal, setShowFailedModal] = useState(false);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { data: session_user } = useSession();
   const { mutate: finishQuiz, isPending: isSubmitting } = useFinishQuiz();
 
-  // Load session from sessionStorage
   useEffect(() => {
     setIsLoading(true);
     const raw = sessionStorage.getItem("quiz_session");
@@ -67,19 +238,15 @@ export default function QuizPage() {
       return;
     }
     const data: QuizSession = JSON.parse(raw);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    setTimeout(() => setIsLoading(false), 1000);
     setSession(data);
 
-    // Hitung sisa waktu berdasarkan started_at
     const startedAt = new Date(data.started_at).getTime();
     const endsAt = startedAt + data.time_limit * 60 * 1000;
     const remaining = Math.max(0, Math.floor((endsAt - Date.now()) / 1000));
     setSecondsLeft(remaining);
   }, [router]);
 
-  // Countdown timer
   useEffect(() => {
     if (secondsLeft === null) return;
     if (secondsLeft <= 0) {
@@ -99,7 +266,6 @@ export default function QuizPage() {
     if (!session) return;
     setShowConfirm(false);
 
-    // Build payload
     const payload = {
       attempt_id: session.attempt_id,
       answers: Object.entries(answers).map(
@@ -118,17 +284,26 @@ export default function QuizPage() {
       },
       {
         onSuccess: (res) => {
-          console.log("res", res);
-          setIsLoading(true);
-          if (res.data.status === "success") {
-            toast.success(res.data.message);
-            setTimeout(() => {
-              setIsLoading(false);
-              sessionStorage.removeItem("quiz_session");
-              router.push(`/kelas-saya/${res.data.slug}`);
-            }, 1000);
+          if (res.status === true) {
+            sessionStorage.removeItem("quiz_session");
+
+            if (res.data?.is_passed === true) {
+              // ── Lulus → langsung redirect seperti sebelumnya ──
+              toast.success(res.message);
+              setIsLoading(true);
+              setTimeout(() => {
+                setIsLoading(false);
+                router.push(`/kelas-saya/${res.data.slug}`);
+              }, 1000);
+            } else {
+              // ── Tidak lulus → simpan result & tampilkan modal ──
+              toast.warning(res.message);
+              setQuizResult(res.data as QuizResult);
+              setShowFailedModal(true);
+            }
           } else {
-            toast.error(res.data.message);
+            toast.error(res.message);
+            setIsLoading(true);
             setTimeout(() => {
               setIsLoading(false);
               router.push(`/kelas-saya/${res.data.slug}`);
@@ -136,9 +311,8 @@ export default function QuizPage() {
           }
         },
         onError: (err) => {
-          console.error(err);
+          toast.error(err.message);
           setIsLoading(true);
-          toast.error("Gagal menyelesaikan kuis");
           setTimeout(() => {
             setIsLoading(false);
             sessionStorage.removeItem("quiz_session");
@@ -149,6 +323,19 @@ export default function QuizPage() {
     );
   }
 
+  // ── Modal action handlers ──
+  function handleRetry() {
+    setShowFailedModal(false);
+    setQuizResult(null);
+    // Kembali ke halaman kelas untuk mulai quiz lagi
+    if (quizResult) router.push(`/kelas-saya/${quizResult.slug}`);
+  }
+
+  function handleBackToMaterial() {
+    setShowFailedModal(false);
+    if (quizResult) router.push(`/kelas-saya/${quizResult.slug}`);
+  }
+
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -157,15 +344,12 @@ export default function QuizPage() {
     );
   }
 
-  if (isLoading) {
-    return <GlobalLoading />;
-  }
+  if (isLoading) return <GlobalLoading />;
 
   const question = session.questions[currentIndex];
   const totalQ = session.questions.length;
   const answeredCount = Object.keys(answers).length;
   const unansweredCount = totalQ - answeredCount;
-
   const minutes = Math.floor((secondsLeft ?? 0) / 60);
   const seconds = (secondsLeft ?? 0) % 60;
   const isWarning = (secondsLeft ?? 999) <= 60;
@@ -179,17 +363,11 @@ export default function QuizPage() {
             <span className="text-xs text-slate-400">
               Percobaan #{session.attempt_no}
             </span>
-            {/* <span
-              className="text-sm font-semibold text-slate-700 truncate max-w-[200px]"
-              dangerouslySetInnerHTML={{ __html: question.question_text }}
-            /> */}
             <span>
               Silahkan selesaikan kuis ini, mohon kerjakan dengan
               sungguh-sungguh karena ini akan mempengaruhi nilai akhir anda
             </span>
           </div>
-
-          {/* Timer */}
           <div
             className={`flex items-center gap-2 rounded-xl px-4 py-2 font-mono text-base font-bold transition-colors ${
               isWarning
@@ -202,8 +380,6 @@ export default function QuizPage() {
             {String(seconds).padStart(2, "0")}
           </div>
         </div>
-
-        {/* Progress bar */}
         <div className="h-1 bg-slate-100">
           <div
             className="h-full bg-gradient-to-r from-teal-400 to-teal-600 transition-all duration-300"
@@ -213,7 +389,7 @@ export default function QuizPage() {
       </div>
 
       <div className="mx-auto max-w-3xl px-4 py-6">
-        {/* Question number dots */}
+        {/* Question dots */}
         <div className="mb-6 flex flex-wrap gap-2">
           {session.questions.map((q, i) => (
             <button
@@ -241,7 +417,6 @@ export default function QuizPage() {
             className="text-base font-medium text-slate-800 leading-relaxed mb-6"
             dangerouslySetInnerHTML={{ __html: question.question_text }}
           />
-
           <div className="flex flex-col gap-3">
             {question.options.map((opt) => {
               const selected = answers[question.id] === opt.id;
@@ -349,6 +524,15 @@ export default function QuizPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Failed modal — muncul saat is_passed === false */}
+      {showFailedModal && quizResult && (
+        <QuizFailedModal
+          result={quizResult}
+          onRetry={handleRetry}
+          onBackToMaterial={handleBackToMaterial}
+        />
       )}
     </div>
   );

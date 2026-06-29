@@ -14,9 +14,12 @@ import {
   Shuffle,
   AlertCircle,
   Loader2,
+  AlertCircleIcon,
+  Check,
 } from "lucide-react";
 import GlobalLoading from "@/app/loading";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 interface QuizModalProps {
   open: boolean;
@@ -56,7 +59,12 @@ export default function QuizModal({
   const attemptPct = attemptLimit > 0 ? (attemptUsed / attemptLimit) * 100 : 0;
 
   function handleStart() {
-    if (!courseId || !activityId || !token) return;
+    if (!courseId || !activityId || !token) {
+      toast.error("Token tidak ditemukan", {
+        icon: <AlertCircleIcon />,
+      });
+      return;
+    }
     startQuiz(
       { courseId, activityId, token },
       {
@@ -64,17 +72,25 @@ export default function QuizModal({
           if (res.status && res.data) {
             sessionStorage.setItem("quiz_session", JSON.stringify(res.data));
             setIsLoading(true);
+            toast.success(res.message, {
+              icon: <Check />,
+            });
             setTimeout(() => {
               router.push(`/quiz/${res.data.attempt_id}`);
               setIsLoading(false);
             }, 1000);
           } else {
+            toast.error(res.message, {
+              icon: <AlertCircleIcon />,
+            });
             setIsLoading(false);
           }
         },
         onError: () => {
           setIsLoading(false);
-          alert("Gagal memulai quiz. Coba lagi.");
+          toast.error("Gagal memulai quiz. Coba lagi.", {
+            icon: <AlertCircleIcon />,
+          });
         },
       },
     );
@@ -203,14 +219,7 @@ export default function QuizModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-7 py-4 border-t border-slate-100">
-          <p className="text-xs text-slate-400">
-            Tekan{" "}
-            <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
-              Esc
-            </kbd>{" "}
-            untuk menutup
-          </p>
+        <div className="flex items-center justify-end px-7 py-4 border-t border-slate-100">
           <button
             onClick={handleStart}
             disabled={isLoading || isPending || !quiz?.can_start}

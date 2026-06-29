@@ -39,7 +39,7 @@ const Tentang = () => {
             </div>
             <div className="col-span-6 flex justify-center">
               <Image
-                src="/images/tentang/asn_tentang.png"
+                src="/images/Tentang/asn_tentang.png"
                 alt="nothing"
                 width={350}
                 height={505}
