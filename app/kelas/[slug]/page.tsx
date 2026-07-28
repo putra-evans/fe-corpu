@@ -257,8 +257,7 @@ export default function CourseDetail() {
                     width="18"
                   />
                   <p className={`text-sm ${statusPendaftaran.text}`}>
-                    {statusPendaftaran.label} {statusPendaftaran.diff} hari
-                    lagi!
+                    {statusPendaftaran.diff} hari lagi!
                   </p>
                 </div>
               )}

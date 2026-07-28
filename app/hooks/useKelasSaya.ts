@@ -9,6 +9,7 @@ type Params = {
   page?: number;
   search?: string;
   sort?: string;
+  type?: string;
   token?: string;
 };
 
@@ -19,6 +20,7 @@ const fetchKelasSaya = async (params: Params): Promise<KelasResponse> => {
     search: params.search || "",
     sort: params.sort || "",
     page: String(params.page || 1),
+    type: params.type || "",
   });
 
   const res = await fetch(`/api/proxy/course/my-courses?${query.toString()}`, {
@@ -50,6 +52,7 @@ export const useKelasSaya = (params: Params) => {
       params.search,
       params.status,
       params.sort,
+      params.type,
     ],
     queryFn: () => fetchKelasSaya(params),
     enabled: !!params.token,
