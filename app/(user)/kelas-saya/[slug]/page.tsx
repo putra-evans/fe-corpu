@@ -42,6 +42,7 @@ import ActivityTextModal from "../../components/ActivityTextModal";
 import QuizModal from "../../components/QuizModal";
 import CertificateModal from "../../components/CertificateModal";
 import QuizHistoryModal from "../../components/Quizhistorymodal";
+import SurveyModal from "../../components/SurveyModal";
 import { toast } from "react-toastify";
 
 type ActivityListItem = {
@@ -106,8 +107,12 @@ export default function ClassDetailPage() {
   const slug = params.slug as string;
   const { course, isLoading } = useKelasBySlug(slug);
   const finishMutation = useFinishActivity();
+
   const [selectedText, setSelectedText] = useState<ActivityDetail | null>(null);
   const [selectedQuiz, setSelectedQuiz] = useState<ActivityListItem | null>(
+    null,
+  );
+  const [selectedSurvey, setSelectedSurvey] = useState<ActivityListItem | null>(
     null,
   );
   const [selectedCertificate, setSelectedCertificate] =
@@ -130,8 +135,6 @@ export default function ClassDetailPage() {
     });
 
   if (isLoading) return <GlobalLoading />;
-
-  console.log("activity", activity);
 
   const rawList: any = activity?.data;
   const activities: ActivityListItem[] = (
@@ -187,34 +190,36 @@ export default function ClassDetailPage() {
           ?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 50);
       setTimeout(() => setHighlightId(null), 1400);
-      return;
     }
-    setTimeout(() => setHighlightId(null), 1400);
   };
 
   const handleOpenContent = async (a: ActivityListItem, d?: ActivityDetail) => {
+    // Text
     if (a.type?.toLowerCase().includes("text")) {
       setSelectedText(d || null);
       return;
     }
 
+    // Quiz
     if (a.type?.toLowerCase().includes("quiz")) {
       setSelectedQuiz(a);
       return;
     }
 
+    // Survey
+    if (a.type?.toLowerCase().includes("survey")) {
+      setSelectedSurvey(a);
+      return;
+    }
+
+    // File / video / link — buka di tab baru
     const url =
       d?.content?.file_url || d?.content?.video_url || d?.content?.url;
     if (url) window.open(url, "_blank");
   };
 
-  const handleDownloadCertificate = () => {
-    setSelectedCertificate(true);
-  };
-
-  const handleHistoryQuiz = () => {
-    setShowHistory(true);
-  };
+  const handleDownloadCertificate = () => setSelectedCertificate(true);
+  const handleHistoryQuiz = () => setShowHistory(true);
 
   const r = 42;
   const c = 2 * Math.PI * r;
@@ -222,33 +227,22 @@ export default function ClassDetailPage() {
 
   const finishModule = (id: string) => {
     finishMutation.mutate(
-      {
-        courseId: course!.id,
-        activityId: id,
-      },
+      { courseId: course!.id, activityId: id },
       {
         onSuccess: (data: any) => {
           toast.success(data.message);
-          // cari activity berikutnya
           const currentIndex = activities.findIndex((item) => item.id === id);
-
           const nextActivity = activities[currentIndex + 1];
-
           if (nextActivity) {
             setOpenActivityId(nextActivity.id);
-
             setTimeout(() => {
               document
                 .getElementById(`activity-${nextActivity.id}`)
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "center",
-                });
+                ?.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 300);
           }
         },
         onError: (err: any) => {
-          console.log(err);
           toast.error(err.message);
         },
       },
@@ -308,34 +302,27 @@ export default function ClassDetailPage() {
           <div className="space-y-3 lg:col-span-2">
             {activities.map((a, index) => {
               const prevActivity = activities[index - 1];
-
               const isLocked = index > 0 && !prevActivity?.is_completed;
               const isOpen = openActivityId === a.id;
               const { Icon, action, ActionIcon } = getActivityVisual(a.type);
               const showDetail =
                 isOpen && !isDetailLoading && detail && detail.id === a.id;
               const isQuiz = a.type?.toLowerCase().includes("quiz");
-              console.log("detail", detail?.content?.video_url);
+              const isSurvey = a.type?.toLowerCase().includes("survey");
 
               return (
                 <div
                   id={`activity-${a.id}`}
                   key={a.id}
                   className={`
-                      overflow-hidden rounded-2xl border transition
-                      ${
-                        isLocked
-                          ? "border-slate-100 bg-slate-50 opacity-70"
-                          : "border-slate-200 bg-white"
-                      }
-                    ${highlightId === a.id ? " ring-2 ring-teal-200" : ""}
+                    overflow-hidden rounded-2xl border transition
+                    ${isLocked ? "border-slate-100 bg-slate-50 opacity-70" : "border-slate-200 bg-white"}
+                    ${highlightId === a.id ? "ring-2 ring-teal-200" : ""}
                   `}
                 >
                   <button
                     onClick={() => {
-                      if (!isLocked) {
-                        handleToggleActivity(a.id);
-                      }
+                      if (!isLocked) handleToggleActivity(a.id);
                     }}
                     className="flex w-full items-center gap-3 px-5 py-4 text-left"
                   >
@@ -355,11 +342,7 @@ export default function ClassDetailPage() {
 
                     <div className="min-w-0 flex-1">
                       <p
-                        className={`truncate text-sm font-medium ${
-                          a.is_completed
-                            ? "text-slate-400 line-through"
-                            : "text-slate-800"
-                        }`}
+                        className={`truncate text-sm font-medium ${a.is_completed ? "text-slate-400 line-through" : "text-slate-800"}`}
                       >
                         {a.type_label}
                       </p>
@@ -392,11 +375,13 @@ export default function ClassDetailPage() {
                           konten...
                         </div>
                       )}
+
                       {showDetail && (
                         <div className="space-y-3">
                           <h3 className="text-sm font-medium text-slate-800">
                             Judul Materi : {detail?.title}
                           </h3>
+
                           {detail?.description && (
                             <div
                               className="text-sm text-slate-600 text-justify"
@@ -405,6 +390,7 @@ export default function ClassDetailPage() {
                               }}
                             />
                           )}
+
                           {detail?.content?.file_url && (
                             <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
                               <div className="flex items-center gap-2 text-sm text-slate-700">
@@ -424,6 +410,7 @@ export default function ClassDetailPage() {
                               </button>
                             </div>
                           )}
+
                           {detail?.content?.video_url &&
                             detail?.content?.video_type === "youtube" && (
                               <iframe
@@ -449,19 +436,11 @@ export default function ClassDetailPage() {
                                 allowFullScreen
                               />
                             )}
-                          {!isQuiz &&
-                            !detail?.content?.file_url &&
-                            !detail?.content?.video_url && (
-                              <button
-                                onClick={() => handleOpenContent(a, detail)}
-                                className="flex justify-end gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-teal-300 hover:text-teal-700"
-                              >
-                                <ActionIcon size={13} /> {action}
-                              </button>
-                            )}
+
+                          {/* Tombol aksi utama — quiz & survey */}
                           {!a.is_completed && (
                             <div className="flex w-full justify-center mt-5">
-                              {a.type?.toLowerCase().includes("quiz") ? (
+                              {isQuiz ? (
                                 <button
                                   onClick={() => handleOpenContent(a, detail)}
                                   className="w-full rounded-lg bg-teal-500 px-3 py-2 text-white hover:bg-teal-600"
@@ -469,6 +448,16 @@ export default function ClassDetailPage() {
                                   <span className="flex items-center justify-center gap-2">
                                     <Play size={16} />
                                     Mulai Kuis
+                                  </span>
+                                </button>
+                              ) : isSurvey ? (
+                                <button
+                                  onClick={() => handleOpenContent(a, detail)}
+                                  className="w-full rounded-lg bg-violet-500 px-3 py-2 text-white hover:bg-violet-600"
+                                >
+                                  <span className="flex items-center justify-center gap-2">
+                                    <RectangleEllipsis size={16} />
+                                    Isi Survey
                                   </span>
                                 </button>
                               ) : (
@@ -557,7 +546,6 @@ export default function ClassDetailPage() {
                 {activities.map((a, index) => {
                   const prevActivity = activities[index - 1];
                   const isLocked = index > 0 && !prevActivity?.is_completed;
-
                   return (
                     <button
                       key={a.id}
@@ -598,10 +586,9 @@ export default function ClassDetailPage() {
           </div>
         </div>
 
-        {/* Ujian Akhir & Sertifikat */}
+        {/* Informasi Tambahan */}
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-slate-800">
-            {/* Ujian Akhir &amp; Sertifikat */}
             Informasi Tambahan
           </h2>
           <p className="mt-1 text-sm text-slate-500">
@@ -613,17 +600,10 @@ export default function ClassDetailPage() {
             <div className="space-y-6">
               {quizActivities && quizActivities?.length > 0 && (
                 <div
-                  id="stage-cert"
-                  className={`flex items-start gap-4 rounded-xl p-2 transition ${
-                    highlightId === "cert" ? "bg-teal-50" : ""
-                  }`}
+                  className={`flex items-start gap-4 rounded-xl p-2 transition ${highlightId === "cert" ? "bg-teal-50" : ""}`}
                 >
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                      !certUnlocked
-                        ? "bg-slate-100 text-slate-400"
-                        : "bg-orange-100 text-orange-600"
-                    }`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${!certUnlocked ? "bg-slate-100 text-slate-400" : "bg-orange-100 text-orange-600"}`}
                   >
                     {certUnlocked ? <History size={18} /> : <Lock size={17} />}
                   </div>
@@ -638,7 +618,7 @@ export default function ClassDetailPage() {
                   <button
                     disabled={!certUnlocked}
                     onClick={handleHistoryQuiz}
-                    className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5  font-semibold transition w-40 text-center ${
+                    className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold transition w-40 text-center justify-center ${
                       certUnlocked
                         ? "bg-teal-500 text-white hover:bg-teal-600"
                         : "cursor-not-allowed border border-slate-200 text-slate-300"
@@ -651,17 +631,10 @@ export default function ClassDetailPage() {
 
               {/* Sertifikat */}
               <div
-                id="stage-cert"
-                className={`flex items-start gap-4 rounded-xl p-2 transition ${
-                  highlightId === "cert" ? "bg-teal-50" : ""
-                }`}
+                className={`flex items-start gap-4 rounded-xl p-2 transition ${highlightId === "cert" ? "bg-teal-50" : ""}`}
               >
                 <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                    !certUnlocked
-                      ? "bg-slate-100 text-slate-400"
-                      : "bg-orange-100 text-orange-600"
-                  }`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${!certUnlocked ? "bg-slate-100 text-slate-400" : "bg-orange-100 text-orange-600"}`}
                 >
                   {certUnlocked ? <Award size={18} /> : <Lock size={17} />}
                 </div>
@@ -678,7 +651,7 @@ export default function ClassDetailPage() {
                 <button
                   disabled={!certUnlocked}
                   onClick={handleDownloadCertificate}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5  font-semibold transition w-40 text-center ${
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold transition w-40 text-center justify-center ${
                     certUnlocked
                       ? "bg-orange-600 text-white hover:bg-orange-700"
                       : "cursor-not-allowed border border-slate-200 text-slate-300"
@@ -691,6 +664,8 @@ export default function ClassDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
       <ActivityTextModal
         open={!!selectedText}
         title={selectedText?.title}
@@ -705,6 +680,14 @@ export default function ClassDetailPage() {
         activityId={selectedQuiz?.id}
         courseId={course?.id}
         token={session?.accessToken}
+      />
+      <SurveyModal
+        open={!!selectedSurvey}
+        onClose={() => setSelectedSurvey(null)}
+        courseId={course?.id || ""}
+        activityId={selectedSurvey?.id || ""}
+        token={session?.accessToken || ""}
+        onCompleted={() => setSelectedSurvey(null)}
       />
       <CertificateModal
         open={!!selectedCertificate}
