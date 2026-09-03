@@ -33,7 +33,6 @@ export const useFinishQuiz = () => {
           body: JSON.stringify(payload),
         },
       );
-      console.log("res", res);
 
       if (!res.ok) {
         throw new Error("Gagal menyelesaikan modul");

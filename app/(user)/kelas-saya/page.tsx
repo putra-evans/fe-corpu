@@ -51,9 +51,7 @@ const KelasSaya = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold text-gray-800">
-        Kelas Saya {session?.accessToken}
-      </h1>
+      <h1 className="text-xl font-semibold text-gray-800">Kelas Saya</h1>
       <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
         {/* 🔍 Search */}
         <div className="relative w-full md:max-w-sm">
