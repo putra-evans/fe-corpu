@@ -37,8 +37,6 @@ export default function QuizHistoryModal({
     enabled: open,
   });
 
-  console.log("data", data);
-
   if (!open) return null;
 
   const summary = data?.summary;

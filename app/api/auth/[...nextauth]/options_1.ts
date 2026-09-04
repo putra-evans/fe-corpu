@@ -39,7 +39,6 @@ export const options: NextAuthOptions = {
         // Validasi struktur response
         if (data.status === true && data.data.token != "") {
           const user = data.data.user;
-          console.log("DATA RESPONSE LOGIN", user);
 
           // Validasi properti penting user (jaga-jaga kalau data API tidak konsisten)
           if (!user.nip || !credentials.username || !user.name) {

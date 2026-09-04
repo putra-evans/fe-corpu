@@ -23,8 +23,6 @@ async function resubmitRequirement(payload: ResubmitPayload): Promise<void> {
     file,
   } = payload;
 
-  console.log("payload", payload);
-
   let body: FormData | string;
   let headers: Record<string, string> = {
     Authorization: `Bearer ${token}`,

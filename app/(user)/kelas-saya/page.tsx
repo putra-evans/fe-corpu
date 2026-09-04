@@ -35,8 +35,6 @@ const KelasSaya = () => {
   const kelasList = data?.data ?? [];
   const lastPage = meta?.last_page ?? 1;
 
-  console.log(data, "data");
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -306,7 +304,6 @@ const KelasSaya = () => {
                         onClick={() => {
                           setCourseId(kelas.course_id);
                           setShowVerification(true);
-                          console.log(kelas.course_id, "course_id");
                         }}
                       >
                         Verifikasi Berkas

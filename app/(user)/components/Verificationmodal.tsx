@@ -61,8 +61,6 @@ export default function VerificationModal({
     }[enrollmentStatus] ?? "from-indigo-700 via-indigo-600 to-violet-500";
 
   function handleResubmit(req: Requirement) {
-    console.log("req", req);
-    console.log("enrol", enrollment?.id);
     const val = editValues[req.requirement_id];
     const file = editFiles[req.requirement_id];
 

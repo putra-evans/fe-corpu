@@ -25,7 +25,6 @@ export const useFinishActivity = () => {
           },
         },
       );
-      console.log("res", res);
 
       if (!res.ok) {
         const errorData = await res.json();

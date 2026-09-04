@@ -1,7 +1,3 @@
-// app/hooks/useCertificateList.ts
-//  const { data: session } = useSession();
-//   const token = session?.accessToken || "";
-//   console.log(token, "token");
 import { useQuery } from "@tanstack/react-query";
 
 export interface CertificateItem {

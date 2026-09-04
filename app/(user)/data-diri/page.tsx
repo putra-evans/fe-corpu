@@ -227,7 +227,7 @@ const DataDiri = () => {
       </div>
 
       {/* 🔹 Security */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+      {/* <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
         <div className="flex items-center gap-2 mb-5">
           <Icon icon="mdi:lock-outline" width="20" className="text-primary" />
           <h3 className="text-sm font-semibold text-gray-600">Keamanan</h3>
@@ -252,7 +252,7 @@ const DataDiri = () => {
             Ubah Password
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

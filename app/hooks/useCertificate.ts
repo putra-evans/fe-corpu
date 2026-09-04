@@ -24,8 +24,6 @@ async function fetchCertificate(
   courseId: string,
   token: string,
 ): Promise<CertificateResponse> {
-  console.log("halaman hook", courseId);
-  console.log("halaman hook", token);
   const res = await fetch(`/api/proxy/course/${courseId}/certificate`, {
     headers: {
       Authorization: `Bearer ${token}`,

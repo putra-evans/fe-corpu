@@ -28,13 +28,7 @@ export const options: NextAuthOptions = {
             password: credentials.password,
           }),
         });
-
-        console.log("STATUS LOGIN:", res.status);
-        console.log("STATUS TEXT:", res.statusText);
-
         const data = await res.json();
-
-        console.log("DATA LOGIN:", data);
 
         if (!res.ok) {
           throw new Error(data.message || "Login gagal");
@@ -42,14 +36,12 @@ export const options: NextAuthOptions = {
 
         // Cek apakah response dari fetch sukses
         if (!res.ok) {
-          console.log("status false dari backend", data.message);
           throw new Error("Gagal terhubung ke server otentikasi");
         }
 
         // Validasi struktur response
         if (data.status === true && data.data.token != "") {
           const user = data.data.user;
-          console.log("DATA RESPONSE LOGIN", user);
 
           if (!user.nip || !credentials.username || !user.name) {
             throw new Error("Data user tidak lengkap");
@@ -60,8 +52,6 @@ export const options: NextAuthOptions = {
             username: credentials.username,
             nama_asn: user.name,
           };
-
-          console.log("RETURN USER", authUser);
 
           return authUser;
         }
@@ -80,10 +70,6 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
-      console.log("JWT CALLBACK");
-      console.log("TOKEN", token);
-      console.log("USER", user);
-
       if (user) {
         token.username = user.username;
         token.nama_asn = user.nama_asn;

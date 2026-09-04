@@ -36,8 +36,6 @@ export default function CourseDetail() {
   const [open, setOpen] = useState(false);
   const slug = params.slug as string;
 
-  console.log("slug", slug);
-
   const { course, isLoading } = useKelasBySlug(slug);
 
   if (isLoading) return <GlobalLoading />;
