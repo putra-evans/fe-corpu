@@ -13,7 +13,62 @@ const HeaderData: HeaderItem[] = [
   { label: "Kelas", href: "/kelas" },
   { label: "Coaching ", href: "/coaching " },
   { label: "Mentoring ", href: "/mentoring " },
-  // { label: "Docs", href: "/documentation" },
+  {
+    label: "Free Web Pembelajaran ASN",
+    href: "#",
+    submenu: [
+      {
+        label: "ASN Berpijar",
+        href: "https://asn.futureskills.id/id",
+        targetBlank: true,
+      },
+      {
+        label: "Sibangkom ASN",
+        href: "https://sibangkom.lan.go.id/",
+        targetBlank: true,
+      },
+      {
+        label: "LMS Integritas KPK",
+        href: "https://newlearning.kpk.go.id/",
+        targetBlank: true,
+      },
+      {
+        label: "BKN Pedia",
+        href: "https://bknpedia.bkn.go.id/",
+        targetBlank: true,
+      },
+      {
+        label: "Digitalent Komdigi",
+        href: "https://digitalent.komdigi.go.id/#",
+        targetBlank: true,
+      },
+      {
+        label: "KLC2 Kemenkeu",
+        href: "https://klc2.kemenkeu.go.id/",
+        targetBlank: true,
+      },
+      {
+        label: "Elearning LKPP",
+        href: "https://elearning.lkpp.go.id/",
+        targetBlank: true,
+      },
+      {
+        label: "INAgov",
+        href: "https://inagov.go.id",
+        targetBlank: true,
+      },
+      {
+        label: "LMS DPR RI",
+        href: "https://akila.dpr.go.id/",
+        targetBlank: true,
+      },
+      {
+        label: "E-learning Hukum",
+        href: "https://e-learning.kemenkum.go.id/",
+        targetBlank: true,
+      },
+    ],
+  },
 ];
 
 const FeaturesData: FeaturesType[] = [

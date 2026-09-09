@@ -109,12 +109,12 @@ const Footer: FC = () => {
         </div>
         <div className="border-t border-grey/15 py-5 flex flex-col sm:flex-row justify-between sm:items-center gap-5">
           <p className="text-sm text-black/70">
-            @2025 - Putra Evans. All Rights Reserved By{" "}
+            @2026 -
             <Link
               href="https://diskominfotik.sumbarprov.go.id/"
               className="hover:text-primary hover:underline"
             >
-              TIM IT Diskominfotik
+              Diskominfotik Provinsi Sumatera Barat
             </Link>
           </p>
 
