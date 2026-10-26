@@ -1,5 +1,6 @@
 # Gunakan image Node.js sebagai base image
-FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine
+# FROM 10.5.44.50:5050/devops/base-images/kominfotik-node-20.19-alpine
+FROM node:24-alpine AS build
 
 # Setel direktori kerja di container
 WORKDIR /app
